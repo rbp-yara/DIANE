@@ -69,6 +69,12 @@ mod_module_levels_ui <- function(id){
 mod_module_levels_server <- function(input, output, session, r){
   ns <- session$ns
   
+  pca_raw_results <- shiny::reactive({
+    shiny::req(r$normalized_counts, r$conditions)
+    print("PCA COMPUTATION")
+    compute_pca(r$normalized_counts, kept_axes = 10)
+  })
+  
   output$pca_ui <- shiny::renderUI({
     if(is.null(r$normalized_counts)) {
       shinydashboardPlus::descriptionBlock(
@@ -77,8 +83,110 @@ mod_module_levels_server <- function(input, output, session, r){
         rightBorder = FALSE
       )
     }
-    else shiny::plotOutput(ns('pca_plot'), height = "800px")
+    # else shiny::plotOutput(ns('pca_plot'), height = "800px")
+    shinydashboard::tabBox(
+      id = "tabset_advanced_pca",
+      height = "450px",
+      width = "12",
+      tabPanel("PCA Summary",
+               shiny::plotOutput(ns('pca_plot'), height = "800px")
+      ),
+      tabPanel("Specific PCA plot",
+               shiny::uiOutput(
+                 ns("plot_specific_pca")
+               )
+      ),
+      tabPanel("PCA correlation plot",
+               shiny::uiOutput(ns("pca_correlation_plot"))
+      ),
+    )
+    
+    
+    
   })
+  
+  output$plot_specific_pca <- shiny::renderUI({
+    if(is.null(r$normalized_counts)) {
+      shinydashboardPlus::descriptionBlock(
+        number = "Please normalize and filter raw data in previous tab",
+        numberColor = "orange",
+        rightBorder = FALSE
+      )
+    } else {
+      shiny::tagList(
+        shiny::column(6, align = "center",
+                      shiny::selectInput(ns("component_1_choice"), "First component",
+                                         as.character(1:(ncol(pca_raw_results()$co)-2)),
+                                         selected = "1")
+        ),
+        shiny::column(6, align = "center",
+                      shiny::selectInput(ns("component_2_choice"), "Second component",
+                                         as.character(1:(ncol(pca_raw_results()$co)-2)),
+                                         selected = "2")
+        ),
+        shiny::column(12, align = "center",
+                      shiny::plotOutput(ns("specific_pca_plot"), height = "800px")
+        )
+      )
+      
+    }
+  })
+  
+  ###Pour l'onglet "PCA summary"
+  output$specific_pca_plot <- shiny::renderPlot({
+    req(pca_raw_results(), input$component_1_choice, input$component_2_choice)
+    draw_specific_pca(
+      pca_raw_results(),
+      component_1 = input$component_1_choice,
+      component_2 = input$component_2_choice,
+      legend = TRUE
+    )
+  })
+  
+  ###Pour l'onglet "Advanced PCA"
+  output$specific_pca_plot_2 <- shiny::renderPlot({
+    req(pca_raw_results(), input$component_3_choice, input$component_4_choice)
+    draw_specific_pca(
+      pca_raw_results(),
+      component_1 = input$component_3_choice,
+      component_2 = input$component_4_choice,
+      legend = TRUE
+    )
+  })
+  
+  output$pca_correlation_plot <- shiny::renderUI({
+    if (is.null(r$normalized_counts)) {
+      shinydashboardPlus::descriptionBlock(number = "Please normalize and filter raw data in previous tab",
+                                           numberColor = "orange",
+                                           rightBorder = FALSE)
+    } else {
+      shiny::plotOutput(outputId = ns("pca_plot_correlation"))
+    }
+  })
+  
+  output$pca_plot_correlation <- shiny::renderPlot({
+    req(pca_raw_results())
+    if (is.null(r$design)) {
+      print("pic")
+      pca_plot_correlation(pca_raw_results())
+    } else {
+      print("poc")
+      pca_plot_correlation(pca_raw_results(), design = r$design)
+    }
+  })
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   output$condition_choice <- shiny::renderUI({
     shiny::req(r$normalized_counts, r$conditions)
@@ -139,7 +247,8 @@ mod_module_levels_server <- function(input, output, session, r){
   
   output$pca_plot <- shiny::renderPlot({
     shiny::req(r$normalized_counts)
-    draw_PCA(r$normalized_counts)
+    # draw_PCA(r$normalized_counts)
+    quick_pca(r$normalized_counts)
   })
   
  
