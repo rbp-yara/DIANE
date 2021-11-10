@@ -449,8 +449,28 @@ draw_expression_levels <-
 #' @examples
 #' data("abiotic_stresses")
 #' pca <- compute_pca(abiotic_stresses$normalized_counts)
-compute_pca <- function(data, kept_axes = 10){
-  data <- log(data + 2)
+compute_pca <- function(data, kept_axes = 4){
+  
+  if (ncol(data) < 4) {
+    stop(
+      "The input expression file has too few conditions 
+      for PCA to be interesting. It should have at least 4 samples."
+    )
+  }
+  
+  
+  nf = kept_axes
+  
+  ###FIXME : allow to compute ncol(data) - 1 components ?
+  if (ncol(data) == 4) {
+    message(
+      "The input expression file has few conditions (4), so
+            only 3 principal components will be computed instead of the 4 by default."
+    )
+    nf = 3
+    
+  }
+  
   data <- data / rowMeans(data)
   acp <-
     ade4::dudi.pca(
@@ -458,7 +478,7 @@ compute_pca <- function(data, kept_axes = 10){
       center = TRUE,
       scale = TRUE,
       scannf = FALSE,
-      nf = kept_axes
+      nf = nf
     )
   
   acp$co$condition = stringr::str_split_fixed(rownames(acp$co), '_', 2)[, 1]
