@@ -157,17 +157,6 @@ mod_module_levels_server <- function(input, output, session, r){
     )
   })
   
-  ###Pour l'onglet "Advanced PCA"
-  output$specific_pca_plot_2 <- shiny::renderPlot({
-    req(pca_raw_results(), input$component_3_choice, input$component_4_choice)
-    draw_specific_pca(
-      pca_raw_results(),
-      component_1 = input$component_3_choice,
-      component_2 = input$component_4_choice,
-      legend = TRUE
-    )
-  })
-  
   # output$pca_correlation_plot <- shiny::renderUI({
   #   if (is.null(r$normalized_counts)) {
   #     shinydashboardPlus::descriptionBlock(number = "Please normalize and filter raw data in previous tab",
