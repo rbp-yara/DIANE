@@ -484,6 +484,7 @@ compute_pca <- function(data, kept_axes = 4){
   acp$co$condition = stringr::str_split_fixed(rownames(acp$co), '_', 2)[, 1]
   acp$co$replicate = stringr::str_split_fixed(rownames(acp$co), '_', 2)[, 2]
   
+  ###FIXME : Not an obligation to compute this here 
   acp$scree <-
     head(
       data.frame(
@@ -508,14 +509,13 @@ compute_pca <- function(data, kept_axes = 4){
 #'
 #' @export
 #' @import ggplot2
+#' @importFrom ggrepel geom_text_repel
 #'
 #' @examples
 #' data("abiotic_stresses")
 #' pca <- compute_pca(abiotic_stresses$normalized_counts)
 #' draw_specific_pca(pca, 1, 2)
 draw_specific_pca <- function(acp, component_1, component_2, legend = TRUE){
-  
-  # browser()
   
   acp_plot <- ggplot2::ggplot(data = acp$co,
                               ggplot2::aes_string(
@@ -555,7 +555,7 @@ draw_specific_pca <- function(acp, component_1, component_2, legend = TRUE){
 #' draw_pca_scree
 #' 
 #' 
-#' @description Display PCA scree plot.
+#' @description Display PCA scree plot, which show contribution of components.
 #' 
 #' @param acp ACP data obtained from compute_pca function.
 #'
@@ -604,11 +604,8 @@ quick_pca <- function(data) {
   pca_results <- compute_pca(data = data, kept_axes = 4)
   # pca_results <- DIANE::compute_pca(data = data)
   
+  ###FIXME : the last component will not exist if the number of condition is too low.
   gridExtra::grid.arrange(
-    # DIANE::draw_specific_pca(pca_results, 1, 2, legend = FALSE),
-    # DIANE::draw_specific_pca(pca_results, 2, 3, legend = FALSE),
-    # DIANE::draw_specific_pca(pca_results, 3, 4, legend = TRUE),
-    # DIANE::draw_pca_scree(pca_results),
     draw_specific_pca(pca_results, 1, 2, legend = FALSE),
     draw_specific_pca(pca_results, 2, 3, legend = FALSE),
     draw_specific_pca(pca_results, 3, 4, legend = TRUE),
@@ -634,7 +631,7 @@ quick_pca <- function(data) {
 #' data("abiotic_stresses")
 #' pca <- compute_pca(abiotic_stresses$normalized_counts)
 #' pca_plot_correlation(pca, abiotic_stresses$design)
-pca_plot_correlation <- function(pca, design = NULL){
+pca_plot_correlation <- function(pca, design = NULL, plotRsquared = FALSE){
   
   if(is.null(design)){
     samples <- colnames(pca[["tab"]])
@@ -657,7 +654,6 @@ pca_plot_correlation <- function(pca, design = NULL){
     design <- metadata
   }
   
-  
   CorLevelPlot::CorLevelPlot(data = cbind(pca$co, design),
                              x = colnames(pca$co)[1:(length(colnames(pca$co)) - 2)],
                              y = colnames(design),
@@ -679,7 +675,7 @@ pca_plot_correlation <- function(pca, design = NULL){
                              scale = TRUE,
                              main = "Correlation",
                              colFrame = "white", 
-                             # plotRsquared = TRUE
+                             plotRsquared = plotRsquared
   )
 }
 
