@@ -428,3 +428,238 @@ draw_expression_levels <-
         axis.text.x = ggplot2::element_text(size = 15, angle = 20)
       ) + ggplot2::xlab("") + ggplot2::ylab("Normalized counts")
   }
+
+
+##  ............................................................................
+##  PCA Related functions                                                   ####
+
+#' compute_pca
+#' 
+#' 
+#' @description compute variables contributions to principal components,
+#' as well as the PCA scree.
+#' 
+#' @param data normalized expression data with samples as columns and genes as rows.
+#' @param kept_axes max number of component to keep.
+#'
+#' @export
+#' @import ggplot2
+#' @import ade4
+#'
+#' @examples
+#' data("abiotic_stresses")
+#' pca <- compute_pca(abiotic_stresses$normalized_counts)
+compute_pca <- function(data, kept_axes = 10){
+  data <- log(data + 2)
+  data <- data / rowMeans(data)
+  acp <-
+    ade4::dudi.pca(
+      data,
+      center = TRUE,
+      scale = TRUE,
+      scannf = FALSE,
+      nf = kept_axes
+    )
+  
+  acp$co$condition = stringr::str_split_fixed(rownames(acp$co), '_', 2)[, 1]
+  acp$co$replicate = stringr::str_split_fixed(rownames(acp$co), '_', 2)[, 2]
+  
+  acp$scree <-
+    head(
+      data.frame(
+        component = seq(1:length(acp$eig)),
+        eigen.values = acp$eig,
+        explained.variance = round(acp$eig / sum(acp$eig) *
+                                     100, 2)
+      ), kept_axes)
+  
+  return(acp)
+}
+
+#' draw_specific_pca
+#' 
+#' 
+#' @description plot PCA results.
+#' 
+#' @param acp ACP data obtained from compute_pca function.
+#' @param component_1 First component to plot
+#' @param component_2 Second component to plot
+#' @param legend Display legend on the plot.
+#'
+#' @export
+#' @import ggplot2
+#'
+#' @examples
+#' data("abiotic_stresses")
+#' pca <- compute_pca(abiotic_stresses$normalized_counts)
+#' draw_specific_pca(pca, 1, 2)
+draw_specific_pca <- function(acp, component_1, component_2, legend = TRUE){
+  
+  # browser()
+  
+  acp_plot <- ggplot2::ggplot(data = acp$co,
+                              ggplot2::aes_string(
+                                x = paste0("Comp",component_1),
+                                y = paste0("Comp",component_2),
+                                color = "condition",
+                                label = "condition",
+                                shape = "replicate"
+                              )) + ggrepel::geom_text_repel( ###REQUIRE ggrepel PACKAGE https://github.com/slowkow/ggrepel (geom_label_repel existe aussi, c'est mignon)
+                                color = "black",
+                                size = 6,
+                                alpha = 0.5,
+                                max.overlaps = 40
+                                # nudge_x = 0.07,
+                                # nudge_y = 0.07
+                              ) +
+    ggplot2::geom_point(size = 6, alpha = 0.7) + ggplot2::xlim(-1, 1) +
+    ggplot2::ylim(-1, 1) + ggplot2::geom_vline(xintercept = 0) + ggplot2::geom_hline(yintercept = 0) +
+    ggplot2::theme(legend.position = "none", title = ggplot2::element_text(size = 18, face = "bold")) +
+    ggplot2::ggtitle(paste0("Principal components ", component_1, " and ", component_2)) +
+    ggplot2::xlab(paste("x-axis : cor. to Comp ", component_1, " ", acp$scree[component_1, "explained.variance"], "%")) +
+    ggplot2::ylab(paste("y-axis : cor. to Comp ", component_2, " ", acp$scree[component_2, "explained.variance"], "%"))
+  
+  if(legend){
+    acp_plot <- acp_plot +
+      ggplot2::theme(
+        legend.position = "bottom", title = ggplot2::element_text(size = 18, face = "bold"),
+        legend.text = ggplot2::element_text(size = 18),
+        legend.text.align = 1
+      )
+  }
+  
+  acp_plot
+  
+}
+
+#' draw_pca_scree
+#' 
+#' 
+#' @description Display PCA scree plot.
+#' 
+#' @param acp ACP data obtained from compute_pca function.
+#'
+#' @export
+#' @import ggplot2
+#'
+#' @examples
+#' data("abiotic_stresses")
+#' pca <- compute_pca(abiotic_stresses$normalized_counts)
+#' draw_pca_scree(pca)
+draw_pca_scree <- function(acp){
+  
+  scree_plot <- ggplot2::ggplot(acp$scree,
+                                ggplot2::aes(
+                                  y = explained.variance,
+                                  x = component,
+                                  fill = component,
+                                  label = paste(round(explained.variance, 1), '%')
+                                )) +
+    ggplot2::geom_bar(stat = "identity") + ggplot2::geom_text(size = max(4, 8-0.5*ncol(acp$c1)),
+                                                              vjust = 1.6,
+                                                              color = "white") +
+    ggplot2::ggtitle("PCA Screeplot") + ggplot2::theme(legend.position = "none",
+                                                       title = ggplot2::element_text(size = 18, face = "bold") )
+  
+  scree_plot
+}
+
+#' Quick PCA
+#' 
+#' 
+#' @description Draws variables contributions to principal components,
+#' as well as the PCA screeplot.
+#' First to fourth principal components are shown.
+#' 
+#' @param data normalized expression data with samples as columns and genes as rows.
+#'
+#' @export
+#' @import ggplot2
+#'
+#' @examples
+#' data("abiotic_stresses")
+#' quick_pca(abiotic_stresses$normalized_counts)
+quick_pca <- function(data) {
+  
+  pca_results <- compute_pca(data = data, kept_axes = 4)
+  # pca_results <- DIANE::compute_pca(data = data)
+  
+  gridExtra::grid.arrange(
+    # DIANE::draw_specific_pca(pca_results, 1, 2, legend = FALSE),
+    # DIANE::draw_specific_pca(pca_results, 2, 3, legend = FALSE),
+    # DIANE::draw_specific_pca(pca_results, 3, 4, legend = TRUE),
+    # DIANE::draw_pca_scree(pca_results),
+    draw_specific_pca(pca_results, 1, 2, legend = FALSE),
+    draw_specific_pca(pca_results, 2, 3, legend = FALSE),
+    draw_specific_pca(pca_results, 3, 4, legend = TRUE),
+    draw_pca_scree(pca_results),
+    ncol = 2
+  )
+}
+
+#' PCA plot correlation
+#' 
+#' 
+#' @description Draw the contribution of each variable group to the 
+#' principal components. 
+#' 
+#' @param pca PCA data obtained from compute_pca function.
+#' @param design 
+#'
+#' @export
+#' @import ggplot2
+#' @import CorLevelPlot
+#'
+#' @examples
+#' data("abiotic_stresses")
+#' pca <- compute_pca(abiotic_stresses$normalized_counts)
+#' pca_plot_correlation(pca, abiotic_stresses$design)
+pca_plot_correlation <- function(pca, design = NULL){
+  
+  if(is.null(design)){
+    samples <- colnames(pca[["tab"]])
+    conditions <- unique(stringr::str_split_fixed(samples, '_', 2)[, 1])
+    design <- data.frame(row.names = samples)
+    design[,conditions] <- NA
+    design <- sapply(colnames(design), function(x){stringr::str_split_fixed(samples, '_', 2)[, 1] %in% x}) + 0 ###Technique fourbe.
+    rownames(design) <- samples
+  } else {
+    samples <- colnames(pca[["tab"]])
+    conditions <- rownames(design)
+    design_condition <- colnames(design)
+    metadata <-  setNames(data.frame(matrix(ncol = length(design_condition), nrow = 0)), design_condition)
+    for(i in samples){
+      # browser()
+      sample_name <- stringr::str_split_fixed(i, '_', 2)[, 1] 
+      corresponding_line <- design[sample_name == conditions,]
+      metadata[i,] <- corresponding_line
+    }
+    design <- metadata
+  }
+  
+  
+  CorLevelPlot::CorLevelPlot(data = cbind(pca$co, design),
+                             x = colnames(pca$co)[1:(length(colnames(pca$co)) - 2)],
+                             y = colnames(design),
+                             cexTitleX = 2.0,
+                             rotTitleX = 0,
+                             fontTitleX = 2,
+                             titleY = "Design",
+                             cexTitleY = 2.0,
+                             rotTitleY = 90,
+                             fontTitleY = 2,
+                             posLab = "topright",
+                             # col = c("blue1", "skyblue", "white", "pink", "red1"),
+                             col = c("#c00000", "#d94b2d", "white", "#5fbf64", "#2f6f46"),
+                             posColKey = "bottom",
+                             cexLabColKey = 1.5,
+                             cexCorval = 1.5,
+                             fontCorval = 2,
+                             rotLabX = 45,
+                             scale = TRUE,
+                             main = "Correlation",
+                             colFrame = "white", 
+                             # plotRsquared = TRUE
+  )
+}
+
