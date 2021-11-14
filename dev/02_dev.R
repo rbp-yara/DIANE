@@ -131,7 +131,7 @@ golem::add_fct( "geneIDs")
 ## Creates .js and .css files at inst/app/www
 #golem::add_js_file( "script" )
 #golem::add_js_handler( "handlers" )
-#golem::add_css_file( "custom" )
+golem::add_css_file( "advanced_pca_selection" )
 
 ## Add internal datasets ----
 ## If you have data in your package

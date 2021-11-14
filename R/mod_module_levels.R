@@ -70,89 +70,11 @@ mod_module_levels_ui <- function(id){
 mod_module_levels_server <- function(input, output, session, r){
   ns <- session$ns
   
+  ###PCA computation when page load.
   pca_raw_results <- shiny::reactive({
     shiny::req(r$normalized_counts, r$conditions)
-    print("PCA COMPUTATION")
     compute_pca(r$normalized_counts, kept_axes = 10)
   })
-  
-  output$pca_ui <- shiny::renderUI({
-    if(is.null(r$normalized_counts)) {
-      shinydashboardPlus::descriptionBlock(
-        number = "Please normalize and filter raw data in previous tab",
-        numberColor = "orange",
-        rightBorder = FALSE
-      )
-    } else {
-    # else shiny::plotOutput(ns('pca_plot'), height = "800px")
-    shinydashboard::tabBox(
-      id = "tabset_advanced_pca",
-      # height = "450px",
-      width = "12",
-      tabPanel("PCA Summary",
-               shiny::plotOutput(ns('pca_plot'), height = "800px")
-      ),
-      tabPanel("Specific PCA plot",
-               shiny::tagList(
-                 shiny::column(6, align = "center",
-                               shiny::selectInput(ns("component_1_choice"), "First component",
-                                                  as.character(1:(ncol(pca_raw_results()$co)-2)),
-                                                  selected = "1")
-                 ),
-                 shiny::column(6, align = "center",
-                               shiny::selectInput(ns("component_2_choice"), "Second component",
-                                                  as.character(1:(ncol(pca_raw_results()$co)-2)),
-                                                  selected = "2")
-                 ),
-                 shiny::column(12, align = "center",
-                               shiny::plotOutput(ns("specific_pca_plot"), height = "800px")
-                 )
-               )
-      ),
-      tabPanel("PCA correlation plot",
-               shiny::plotOutput(outputId = ns("pca_plot_correlation"))
-      )
-    )
-    }
-    
-    
-    
-  })
-  
-  ###Pour l'onglet "PCA summary"
-  output$specific_pca_plot <- shiny::renderPlot({
-    req(pca_raw_results(), input$component_1_choice, input$component_2_choice)
-    draw_specific_pca(
-      pca_raw_results(),
-      component_1 = input$component_1_choice,
-      component_2 = input$component_2_choice,
-      legend = TRUE
-    )
-  })
-  
-  output$pca_plot_correlation <- shiny::renderPlot({
-    req(pca_raw_results())
-    if (is.null(r$design)) {
-      print("pic")
-      pca_plot_correlation(pca_raw_results())
-    } else {
-      print("poc")
-      pca_plot_correlation(pca_raw_results(), design = r$design)
-    }
-  })
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   output$condition_choice <- shiny::renderUI({
     shiny::req(r$normalized_counts, r$conditions)
@@ -215,6 +137,73 @@ mod_module_levels_server <- function(input, output, session, r){
     shiny::req(r$normalized_counts)
     # draw_PCA(r$normalized_counts)
     quick_pca(r$normalized_counts)
+  })
+  
+  ###UI for all the pca related things. Contains 3 tabs with 3 plotoutputs.
+  output$pca_ui <- shiny::renderUI({
+    if(is.null(r$normalized_counts)) {
+      shinydashboardPlus::descriptionBlock(
+        number = "Please normalize and filter raw data in previous tab",
+        numberColor = "orange",
+        rightBorder = FALSE
+      )
+    } else {
+      # else shiny::plotOutput(ns('pca_plot'), height = "800px")
+      shinydashboard::tabBox(
+        id = "tabset_advanced_pca",
+        # height = "450px",
+        width = "12",
+        tabPanel("PCA Summary",
+                 shiny::plotOutput(ns('pca_plot'), height = "800px")
+        ),
+        tabPanel("Specific PCA plot",
+                 shiny::tagList(
+                   shiny::column(6, align = "center",
+                                 shiny::selectInput(ns("component_1_choice"), "First component",
+                                                    as.character(1:(ncol(pca_raw_results()$co)-2)),
+                                                    selected = "1")
+                   ),
+                   shiny::column(6, align = "center",
+                                 shiny::selectInput(ns("component_2_choice"), "Second component",
+                                                    as.character(1:(ncol(pca_raw_results()$co)-2)),
+                                                    selected = "2")
+                   ),
+                   shiny::column(12, align = "center",
+                                 shiny::plotOutput(ns("specific_pca_plot"), height = "800px")
+                   )
+                 )
+        ),
+        tabPanel("PCA correlation plot",
+                 shiny::plotOutput(outputId = ns("pca_plot_correlation"))
+        )
+      )
+    }
+    
+    
+    
+  })
+  
+  ###For the second tab. Plot two specific components.
+  output$specific_pca_plot <- shiny::renderPlot({
+    req(pca_raw_results(), input$component_1_choice, input$component_2_choice)
+    draw_specific_pca(
+      pca_raw_results(),
+      component_1 = input$component_1_choice,
+      component_2 = input$component_2_choice,
+      legend = TRUE
+    )
+  })
+  
+  ###Third tab, PCA correlation plot.
+  output$pca_plot_correlation <- shiny::renderPlot({
+    req(pca_raw_results())
+    if (is.null(r$design)) {
+      print("pic")
+      pca_plot_correlation(pca_raw_results())
+    } else {
+      print("poc")
+      pca_plot_correlation(pca_raw_results(), design = r$design)
+    }
   })
   
  
