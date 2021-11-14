@@ -1,0 +1,38 @@
+#tabset_advanced_pca > li > a {
+    border-bottom-color: rgb(248,248,248);
+    border-top-color: rgb(200,200,200);
+    border-right-color: rgb(200,200,200);
+    border-left-color: rgb(200,200,200);
+    color: rgb(45,45,45);
+    font-size: 15px;
+    border-radius: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+#tabset_advanced_pca > li > a:hover {
+    /*color: #999;*/
+    background-color: #f0f0f0;
+    transition: 0.2s;
+}
+
+#tabset_advanced_pca {
+    border-bottom: none;
+    margin-right: 10px;
+    justify-content: center;
+    display: flex;
+}
+
+#tabset_advanced_pca > li.active {
+    border-bottom-color: rgb(248,248,248);
+    border-top-color: #5fbf64;
+    border-right-color: rgb(200,200,200);
+    border-left-color: rgb(200,200,200);
+    color: rgb(45,45,45);
+    font-size: 20px;
+    border-radius: 5px;
+}
+
+#tabset_advanced_pca > li.active > a {
+    /*background-color: #5fbf641f;*/
+    background-color: #e6e6e6;
+} 

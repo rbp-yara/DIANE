@@ -119,33 +119,6 @@ mod_module_levels_server <- function(input, output, session, r){
     
   })
   
-  # output$plot_specific_pca <- shiny::renderUI({
-  #   if(is.null(r$normalized_counts)) {
-  #     shinydashboardPlus::descriptionBlock(
-  #       number = "Please normalize and filter raw data in previous tab",
-  #       numberColor = "orange",
-  #       rightBorder = FALSE
-  #     )
-  #   } else {
-  #     shiny::tagList(
-  #       shiny::column(6, align = "center",
-  #                     shiny::selectInput(ns("component_1_choice"), "First component",
-  #                                        as.character(1:(ncol(pca_raw_results()$co)-2)),
-  #                                        selected = "1")
-  #       ),
-  #       shiny::column(6, align = "center",
-  #                     shiny::selectInput(ns("component_2_choice"), "Second component",
-  #                                        as.character(1:(ncol(pca_raw_results()$co)-2)),
-  #                                        selected = "2")
-  #       ),
-  #       shiny::column(12, align = "center",
-  #                     shiny::plotOutput(ns("specific_pca_plot"), height = "800px")
-  #       )
-  #     )
-  #     
-  #   }
-  # })
-  
   ###Pour l'onglet "PCA summary"
   output$specific_pca_plot <- shiny::renderPlot({
     req(pca_raw_results(), input$component_1_choice, input$component_2_choice)
@@ -156,16 +129,6 @@ mod_module_levels_server <- function(input, output, session, r){
       legend = TRUE
     )
   })
-  
-  # output$pca_correlation_plot <- shiny::renderUI({
-  #   if (is.null(r$normalized_counts)) {
-  #     shinydashboardPlus::descriptionBlock(number = "Please normalize and filter raw data in previous tab",
-  #                                          numberColor = "orange",
-  #                                          rightBorder = FALSE)
-  #   } else {
-  #     shiny::plotOutput(outputId = ns("pca_plot_correlation"))
-  #   }
-  # })
   
   output$pca_plot_correlation <- shiny::renderPlot({
     req(pca_raw_results())
