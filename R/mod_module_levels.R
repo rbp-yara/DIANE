@@ -11,10 +11,11 @@ mod_module_levels_ui <- function(id){
   ns <- NS(id)
   tagList(
     
-    shiny::fluidRow(shiny::column(12,
-    shiny::h1("Explore normalized gene expression"),
-    
-    shiny::hr(),
+    shiny::fluidRow(
+    shiny::column(12,
+      shiny::h1("Explore normalized gene expression"),
+      shiny::hr()
+    ),
     
     shinyalert::useShinyalert(),
     
@@ -27,15 +28,13 @@ mod_module_levels_ui <- function(id){
     shinydashboard::tabBox(
       title = "Explore normalized data",
       width = 12,
-      height = "900px",
+      height = "80vh",
       shiny::tabPanel(title = "PCA",
                       shiny::fluidRow(
-                      shiny::column(12, shiny::uiOutput(ns("pca_ui"))),
+                      shiny::uiOutput(ns("pca_ui")),
                       shiny::column(12, shiny::includeMarkdown(system.file(
                         "extdata", "pca.md", package = "DIANE"))))
       ),
-      # shiny::tabPanel(title = "MDS",
-      #                 shiny::plotOutput(ns('mds_plot'), height = "800px")),
       shiny::tabPanel(title = "Visualize gene expression levels",
                       shinydashboardPlus::box(
                         title = "Genes and conditions choice",
@@ -59,7 +58,7 @@ mod_module_levels_ui <- function(id){
                                                   width = 12,
                                                   shiny::plotOutput(ns("expression_plot"), height = "700px"))
                       
-      ))
+      )
   )
   ))
 }
@@ -120,16 +119,6 @@ mod_module_levels_server <- function(input, output, session, r){
   })
   
   
-  # #   ____________________________________________________________________________
-  # #   mds                                                                     ####
-  # 
-  # 
-  # output$mds_plot <- shiny::renderPlot({
-  #   shiny::req(r$normalized_counts)
-  #   draw_MDS(r$normalized_counts)
-  # })
-  
-  
   #   ____________________________________________________________________________
   #   pca                                                                     ####
   
@@ -152,7 +141,7 @@ mod_module_levels_server <- function(input, output, session, r){
       shinydashboard::tabBox(
         id = "tabset_advanced_pca",
         # height = "450px",
-        width = "12",
+        width = NULL,
         tabPanel("PCA Summary",
                  shiny::plotOutput(ns('pca_plot'), height = "800px")
         ),
@@ -198,10 +187,10 @@ mod_module_levels_server <- function(input, output, session, r){
   output$pca_plot_correlation <- shiny::renderPlot({
     req(pca_raw_results())
     if (is.null(r$design)) {
-      print("pic")
+      golem::print_dev("In dev\n")("no design provided")
       pca_plot_correlation(pca_raw_results())
     } else {
-      print("poc")
+      golem::print_dev("A design is provided")
       pca_plot_correlation(pca_raw_results(), design = r$design)
     }
   })
