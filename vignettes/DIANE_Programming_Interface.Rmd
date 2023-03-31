@@ -200,13 +200,27 @@ We can plot the correlations of the initial variables to the principal component
 Each principal component explains a certain amount of the total variability, and those relative percentages are shown in what is called the screeplot.
 
 ```{r pca, fig.width=10, fig.height=8}
-DIANE::draw_PCA(data = normalized_counts)
+DIANE::quick_pca(data = normalized_counts)
 ```
 
 The first plane, showing the first two components, is striking in the sense that the conditions are segregated by their heat level.
 Indeed, we find here that 57.3% of gene expression variability can be linked to heat stress.
 
 The second principal axis, is more correlated to osmotic stress, as conditions with mannitol stress are opposed along this axis, carrying 12.2% of gene expression variance.
+
+It is also possible, if needed, to plot only two specific components. This could help to visualize the plot with datasets containing a lot of conditions.
+
+```{r pca_full_screen, fig.width=10, fig.height=8}
+pca_res <- DIANE::compute_pca(data = normalized_counts, kept_axes = 10)
+DIANE::draw_specific_pca(pca = pca_res, component_1 = 1, component_2 = 2, legend = TRUE)
+```
+
+As a complement, correlations between the different components and an experimental design can also be visualized (based on the nice [CorLevelPlot](https://github.com/kevinblighe/CorLevelPlot) package).
+
+```{r pca_correlation_plot, fig.width=10, fig.height=8}
+DIANE::pca_plot_correlation(pca = pca_res, design = abiotic_stresses$design)
+```
+
 
 # Differential expression analysis
 
