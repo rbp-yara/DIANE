@@ -10,7 +10,7 @@
 mod_network_inference_ui <- function(id){
   ns <- NS(id)
   tagList(
-    shinyalert::useShinyalert(),
+    #shinyalert::useShinyalert(),
     
     shinybusy::add_busy_spinner(
       spin = "self-building-square",
@@ -22,7 +22,7 @@ mod_network_inference_ui <- function(id){
     shiny::h1("Network inference"),
     shiny::hr(),
     
-    col_4(
+    shiny::fluidRow(
       
       
 #   ____________________________________________________________________________
@@ -34,7 +34,7 @@ mod_network_inference_ui <- function(id){
         status = "success",
         collapsible = TRUE,
         closable = FALSE,
-        width = 12,
+        width = 4,
         
         col_10(shiny::h4("GENIE3 Gene regulatory network inference")),
         
@@ -52,7 +52,7 @@ mod_network_inference_ui <- function(id){
         shiny::br(),
         
         shiny::fluidRow(col_12(shiny::uiOutput(ns("input_genes_net")))),
-         
+        
         shiny::hr(),
         
 #   ____________________________________________________________________________
@@ -151,20 +151,19 @@ shiny::hr(),
         shiny::hr()
         #shiny::uiOutput(ns("GENIE3_summary"))
         
-      )
     ),
 
 
 #   ____________________________________________________________________________
 #   thresholding options                                                    ####
 
-    col_8(shinydashboardPlus::box(
+   shinydashboardPlus::box(
       title = "Thresholding settings",
       solidHeader = FALSE,
       status = "success",
       collapsible = TRUE,
       closable = FALSE,
-      width = 12,
+      width = 8,
       
       shiny::fluidRow(
                       col_2(shiny::uiOutput(ns("inference_summary"))),
@@ -226,11 +225,9 @@ shiny::hr(),
       
       visNetwork::visNetworkOutput(ns("net_preview"), height = "650px")
       
-    ))
-
-
- 
+    )
   )
+)
 }
     
 #' network_inference Server Function
@@ -630,7 +627,6 @@ mod_network_inference_server <- function(input, output, session, r){
   shiny::observeEvent((input$launch_genie_btn), {
     shiny::req(r$normalized_counts, input$input_deg_genes_net, 
                r$regulators, r$DEGs, input_net(),input$input_conditions_net)
-    
     
     if(r$splicing_aware) {
       all_genes <- get_locus(r$DEGs[[input$input_deg_genes_net]])

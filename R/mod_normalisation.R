@@ -35,14 +35,14 @@ mod_normalisation_ui <- function(id) {
     #   ____________________________________________________________________________
     #   Normalization settings                                                  ####
     
-    col_3(
+    shiny::fluidRow(
       shinydashboardPlus::box(
         title = "Settings",
         solidHeader = FALSE,
         status = "success",
         collapsible = TRUE,
         closable = FALSE,
-        width = 12,
+        width = 3,
         
         col_8(shiny::h2("Normalization")),
         
@@ -134,17 +134,15 @@ mod_normalisation_ui <- function(id) {
         shiny::br(),
         
         shiny::uiOutput(ns("dl_bttns"))
-      )
-    ),
+      ),
     
     
     #   ____________________________________________________________________________
     #   plot results ui                                                         ####
     
-    column(width = 9,
       shinydashboard::tabBox(
         title = "Data exploration",
-        width = 12,
+        width = 9,
         height = "1000px",
         
         shiny::tabPanel(
@@ -177,8 +175,7 @@ mod_normalisation_ui <- function(id) {
       
     ),
     shiny::br()
-    
-  )
+    )
 }
 
 #' normalisation Server Function
@@ -273,6 +270,17 @@ mod_normalisation_server <- function(input, output, session, r) {
         rowSums(r$normalized_counts_pre_filter) > input$low_counts_filter,]
       r$tcc <- list(counts = r$normalized_counts)
     }
+    
+    if(nrow(r$normalized_counts)==0){
+      r$normalized_counts <- NULL
+      shinyalert::shinyalert(
+        "Low-expression filtering error",
+        "The filtering threshold seems too high : no genes remaining. 
+        Please set another threshold to continue.",
+        type = "error"
+      )
+    }
+      
     
     if(golem::get_golem_options("server_version"))
       loggit::loggit(custom_log_lvl = TRUE,
@@ -408,7 +416,8 @@ mod_normalisation_server <- function(input, output, session, r) {
       paste("normalized_counts.RData")
     },
     content = function(file) {
-      save(round(r$normalized_counts, 2), file = file)
+      tosave <- round(r$normalized_counts, 2)
+      save(tosave, file = file)
     }
   )
   

@@ -17,8 +17,6 @@ mod_module_levels_ui <- function(id){
       shiny::hr()
     ),
     
-    shinyalert::useShinyalert(),
-    
     shinybusy::add_busy_spinner(
       spin = "self-building-square",
       position = 'top-left',
