@@ -33,30 +33,31 @@ mod_module_levels_ui <- function(id){
                       shiny::column(12, shiny::includeMarkdown(system.file(
                         "extdata", "pca.md", package = "DIANE"))))
       ),
-      shiny::tabPanel(title = "Visualize gene expression levels",
-                      shinydashboardPlus::box(
-                        title = "Genes and conditions choice",
-                        solidHeader = FALSE,
-                        status = "success",
-                        collapsible = TRUE,
-                        closable = FALSE,
-                        width = 12,
-                        
-                        
-                        shiny::uiOutput(ns("gene_choice")),
-                        
-                        
-                        shiny::uiOutput(ns("condition_choice"))
-                        
-                      ),
-                      shinydashboardPlus::box(solidHeader = FALSE,
-                                                  status = "success",
-                                                  collapsible = TRUE,
-                                                  closable = FALSE,
-                                                  width = 12,
-                                                  shiny::plotOutput(ns("expression_plot"), height = "700px"))
-                      
-      )
+        shiny::tabPanel(title = "Visualize gene expression levels",
+                        shiny::fluidRow(
+                        shinydashboardPlus::box(
+                          title = "Genes and conditions choice",
+                          solidHeader = FALSE,
+                          status = "success",
+                          collapsible = TRUE,
+                          closable = FALSE,
+                          width = 12,
+                          
+                          
+                          shiny::uiOutput(ns("gene_choice")),
+                          
+                          
+                          shiny::uiOutput(ns("condition_choice"))
+                          
+                        ),
+                        shinydashboardPlus::box(solidHeader = FALSE,
+                                                status = "success",
+                                                collapsible = TRUE,
+                                                closable = FALSE,
+                                                width = 12,
+                                                shiny::plotOutput(ns("expression_plot"), height = "700px"))
+                        )  
+        )
   )
   ))
 }
