@@ -641,7 +641,7 @@ quick_pca <- function(data) {
 #' principal components. 
 #' 
 #' @param pca PCA data obtained from compute_pca function.
-#' @param design 
+#' @param design experimental design as a dataframe
 #'
 #' @export
 #' @import ggplot2

@@ -9,7 +9,7 @@ pca_plot_correlation(pca, design = NULL, plotRsquared = FALSE)
 \arguments{
 \item{pca}{PCA data obtained from compute_pca function.}
 
-\item{design}{}
+\item{design}{experimental design as a dataframe}
 }
 \description{
 Draw correlation of each conditions groups to the 
