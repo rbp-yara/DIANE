@@ -1047,7 +1047,6 @@ mod_differential_expression_analysis_server <-
       shiny::req(r$conditions)
       shiny::req(r$top_tags, r_dea$ref, r_dea$trt)
       shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
-      browser()
       genes_conditions <- unique(unlist(stringr::str_extract_all( ##Catch probably any condition name.
         paste(r_dea$ref, r_dea$trt), pattern = "[^()+ ]+"))
       )
