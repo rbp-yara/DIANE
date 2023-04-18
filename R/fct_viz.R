@@ -485,7 +485,7 @@ draw_specific_pca <- function(pca, component_1, component_2, legend = TRUE){
     ggplot2::theme(legend.position = "none", title = ggplot2::element_text(size = 18, face = "bold"), axis.text = ggplot2::element_text(size=14)) +
     ggplot2::ggtitle(paste0("Principal components ", component_1, " and ", component_2)) +
     ggplot2::xlab(paste("x-axis : cor. to Comp ", component_1, " ", pca$scree[component_1, "explained.variance"], "%")) +
-    ggplot2::ylab(paste("y-axis : cor. to Comp ", component_2, " ", pca$scree[component_2, "explained.variance"], "%"))
+    ggplot2::ylab(paste("y-axis : cor. to Comp ", component_2, " ", pca$scree[component_2, "explained.variance"], "%")) 
   
   if(legend){
     acp_plot <- acp_plot +
@@ -552,6 +552,7 @@ draw_pca_scree <- function(pca){
 #'
 #' @export
 #' @import ggplot2
+#' @importFrom gridExtra grid.arrange
 #'
 #' @examples
 #' data("abiotic_stresses")
@@ -566,7 +567,7 @@ quick_pca <- function(data) {
       draw_specific_pca(pca_results, 1, 2, legend = FALSE),
       draw_specific_pca(pca_results, 2, 3, legend = FALSE),
       draw_specific_pca(pca_results, 3, 4, legend = TRUE),
-      draw_pca_scree(pca_results),
+      draw_pca_scree(pca_results), newpage = FALSE,
       ncol = 2
     )
   } else {
@@ -585,8 +586,9 @@ quick_pca <- function(data) {
 #' @description Draw correlation of each conditions groups to the 
 #' principal components. 
 #' 
-#' @param pca PCA data obtained from compute_pca function.
-#' @param design experimental design as a dataframe
+#' @param pca PCA data obtained from the compute_pca function.
+#' @param design experimental design as a dataframe. Please refer to the
+#' experimental-design part of DIANE vignette for format.
 #'
 #' @export
 #' @import ggplot2
@@ -597,6 +599,23 @@ quick_pca <- function(data) {
 #' pca <- compute_pca(abiotic_stresses$normalized_counts)
 #' pca_plot_correlation(pca, abiotic_stresses$design)
 pca_plot_correlation <- function(pca, design = NULL, plotRsquared = FALSE){
+  
+  ###First, we check that design is correct. The numbers in the design formula must be n = 0, n+1, n+2... And nothing else.
+  if(!is.null(design)){
+    for(i in colnames(design)){
+      factorline <- as.numeric(factor(design[[i]])) - 1
+      if(!all(factorline == design[[i]])){
+        stop(paste0(
+          "There is a problem with your design.",
+          " The column ", i ," does not respect the design synthax.\n",
+          "This column contains c(", paste(design[[i]], collapse = ","),
+          "). Here is an int about what it should contain c(",
+          paste(factorline, collapse = ","), ").", collapse  = ""
+        ))
+        # return(FALSE)
+      }
+    }
+  }
   
   if(is.null(design)){
     samples <- colnames(pca[["tab"]])
@@ -611,7 +630,6 @@ pca_plot_correlation <- function(pca, design = NULL, plotRsquared = FALSE){
     design_condition <- colnames(design)
     metadata <-  setNames(data.frame(matrix(ncol = length(design_condition), nrow = 0)), design_condition)
     for(i in samples){
-      # browser()
       sample_name <- stringr::str_split_fixed(i, '_', 2)[, 1] 
       corresponding_line <- design[sample_name == conditions,]
       metadata[i,] <- corresponding_line
@@ -645,3 +663,64 @@ pca_plot_correlation <- function(pca, design = NULL, plotRsquared = FALSE){
   )
 }
 
+#' download_plot_hd
+#' 
+#' 
+#' @description use in shiny to download hd versions of plots. Only aim to make
+#' code more readable.
+#' 
+#' @param plot a plot object, returned by ggplot or lattice
+#' @param file a file name to store the plot in
+#' @param type type of the plot object (ggplot, lattice or other)
+#' @param format plot output format : png, pdf, svg, tiff.
+#' @param res plot resolution. Only used for png and tiff
+#' @param width plot width
+#' @param height plot height
+#'
+#' @export
+#' @importFrom ggplot2 ggsave
+#' @noRd
+download_plot_hd <- function(plot = NULL, file = NULL, type = "ggplot", format = "png", res=300, width = 16, height = 10, plot_error = FALSE){
+  
+  ###An easy way to plot an error message. Used to simplify error handling in shiny.
+  if(plot_error){
+    golem::print_dev("plot_error")
+    plot = NULL
+    plot = ggplot2::ggplot() + ggplot2::annotate("text",  x = 4, y = 25, size=8, label = "There was an error downloading the plot.\nYou can contact the authors if you need\nmore informations.") + ggplot2::theme_void()
+    ggplot2::ggsave(filename = file, plot = plot, device = format, width = 8, height = 3)
+    return()
+  }
+  
+  if (! format %in% c("pdf", "png", "svg", "tiff")) {
+    stop("Format must be one of the following : pdf, png, tiff or svg.")
+  }
+  
+  ###Just to avoid too big plots.
+  if (width > 50 || height > 50 || width <= 1 || height <= 1) {
+    stop("Width and height must be between 1 and 50")
+  }
+
+  # golem::print_dev("Saving a plot.")
+  # if( type == "ggplot"){
+    # ggplot2::ggsave(plot = plot, device = format, filename = file, width = width, height = height, dpi = res)
+  # } else {
+  if(!plot_error){
+    if(format=="png"){
+      png(file, width = width, height = height, res = res, units = "in")
+      print(plot)
+    } else if (format=="pdf"){
+      pdf(file, width = width, height = height)
+      print(plot)
+    } else if (format=="svg"){
+      svg(file, width = width, height = height)
+      print(plot)
+    } else if (format == "tiff"){
+      tiff(file, width = width, height = height, res = res, units = "in", compression = "lzw")
+      print(plot)
+    } else {
+      stop("Output plot format not suported.")
+    }
+    dev.off()
+  }
+  # } 
+}

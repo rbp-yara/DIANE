@@ -32,7 +32,13 @@ app_server <- function(input, output, session) {
     organism = NULL,
     custom_go = NULL,
     session_id = as.character(floor(runif(1)*1e20)),
-    seed = golem::get_golem_options("seed")
+    seed = golem::get_golem_options("seed"),
+    plots_params = list(
+      format = "pdf",
+      res = 300,
+      width = 20,
+      height = 14
+    )
   )
   
   
@@ -88,5 +94,63 @@ app_server <- function(input, output, session) {
   shiny::callModule(mod_legal_mentions_server, "legal_mentions_ui_1")
   mod_versions_server("versions_ui_1")
   
+  output$general_debug_button <- shiny::renderUI({
+    if(golem::app_dev()){
+      actionButton("debug", "debug")
+    } else {
+      NULL
+    }
+  })
+  
+  observeEvent(input$plot_params, {
+    golem::print_dev("plot_params clic")
+    showModal(
+      shiny::fluidRow(
+        modalDialog(
+          tags$h1("Plot parameters"),
+          shiny::helpText(
+            "Here you can adjust the parameters of the plots downloaded using the \"download button\" available next to some plots in DIANE. This allow you to download high resolution versions of the displayed plots in various formats."
+          ),
+          shiny::HTML(
+            paste0("<span style='color: #737373'>",shiny::icon("circle-info"), "</span> <span style='color: #737373'>Note that the res argument only affect png and tiff format.</span>")
+          ),
+          shiny::hr(),
+          shiny::column(6,
+                        shiny::numericInput(inputId = "plot_width", label = "width", value = r[["plots_params"]][["width"]], , min = 3, max = 50)
+          ),
+          shiny::column(6,
+                        shiny::numericInput(inputId = "plot_height", label = "height", value = r[["plots_params"]][["height"]], min = 3, max = 50)
+          ),
+          shiny::column(6,
+                        shiny::numericInput(inputId = "plot_res", label = "res", value = r[["plots_params"]][["res"]], min = 72, max = 600)
+          ),
+          shiny::column(6,
+                        shiny::selectInput("plot_format", label = "Plot format", choices = c("png", "pdf", "tiff", "svg"), selected = r[["plots_params"]][["format"]], multiple = F)
+          )
+        ))
+    )
+  })
+  
+  ###Update images download properties. the related input are not available in modules.
+  shiny::observeEvent(input$plot_width, {
+    golem::print_dev('width update')
+    r[["plots_params"]][["width"]] <- input$plot_width
+  })
+  shiny::observeEvent(input$plot_height, {
+    golem::print_dev('height update')
+    r[["plots_params"]][["height"]] <- input$plot_height
+  })
+  shiny::observeEvent(input$plot_format, {
+    golem::print_dev('format update')
+    r[["plots_params"]][["format"]] <- input$plot_format
+  })
+  shiny::observeEvent(input$plot_res, {
+    golem::print_dev('res update')
+    r[["plots_params"]][["res"]] <- input$plot_res
+  })
+  
+  observeEvent(input$debug, {
+    browser()
+  })
   
 }

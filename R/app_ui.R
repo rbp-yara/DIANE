@@ -23,6 +23,9 @@ logo_diane <- dashboardthemes::shinyDashboardLogoDIY(
 )
 
 dbHeader <- shinydashboard::dashboardHeader(title = logo_diane,
+                                            tags$li(class = "dropdown", 
+                                                    tags$li(shiny::actionButton("plot_params", label = NULL, icon = shiny::icon("image", class = "duotone"), class = "btn-success"), style = "padding-top: 8px; display: inline-block;  color:#0098f8;")
+                                            ),
                                             shinydashboard::dropdownMenu(type = "messages", badgeStatus = "success",
                                                          icon = shiny::icon("info"), headerText = "Information",
                                                          shinydashboard::notificationItem(icon = shiny::icon("desktop"),
@@ -35,8 +38,10 @@ dbHeader <- shinydashboard::dashboardHeader(title = logo_diane,
                                                          shinydashboard::notificationItem(text = "Report bugs on github",
                                                                           href = "https://github.com/OceaneCsn/DIANE/issues",
                                                                           icon = shiny::icon("bug")
-                                                         )
+                                                         ),
+                                                         shiny::uiOutput("general_debug_button")
                                             ))
+
 
 #' The application User-Interface
 #'
