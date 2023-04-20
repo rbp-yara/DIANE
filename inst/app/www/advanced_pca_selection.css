@@ -10,6 +10,14 @@
     padding: 7px 11px;
 }
 
+/*#tabset_advanced_pca .tab-content {
+  padding: 10px 0px 10px 0px !important;
+}*/
+
+#tabset_advanced_pca_div .tab-content {
+  padding: 10px 0px 10px 0px;
+}
+
 #tabset_advanced_pca > li > a:hover {
     /*color: #999;*/
     background-color: #f0f0f0;

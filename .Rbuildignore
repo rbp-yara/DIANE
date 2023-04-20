@@ -14,3 +14,4 @@ $run_dev.*
 ^rsconnect$
 inst/extdata/datasets/*.csv
 ^Dockerfile$
+^\.dockerignore$
