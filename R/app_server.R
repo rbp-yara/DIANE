@@ -109,7 +109,7 @@ app_server <- function(input, output, session) {
         modalDialog(
           tags$h1("Plot parameters"),
           shiny::helpText(
-            "Here you can adjust the parameters of the plots downloaded using the \"download button\" available next to some plots in DIANE. This allow you to download high resolution versions of the displayed plots in various formats."
+            "Here you can adjust the parameters of the plots downloaded using the \"download button\" available next to some plots in DIANE. This allow you to download high resolution / publication quality versions of the displayed plots in various formats."
           ),
           shiny::HTML(
             paste0("<span style='color: #737373'>",shiny::icon("circle-info"), "</span> <span style='color: #737373'>Note that the res argument only affect png and tiff format.</span>")
