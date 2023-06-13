@@ -32,30 +32,33 @@ mod_differential_expression_analysis_ui <- function(id) {
         closable = FALSE,
         width = 4,
         
-        shiny::h4("Estimation of disperion"),
-        col_2(
-          shinyWidgets::dropdownButton(
-            size = 'xs',
-            shiny::includeMarkdown(system.file("extdata", "edgeR.md", package = "DIANE")),
-            circle = TRUE,
-            status = "success",
-            icon = shiny::icon("question"),
-            width = "600px",
-            tooltip = shinyWidgets::tooltipOptions(title = "More details")
-          )
-        ),
-        
-        shiny::hr(),
-        
+ 
         #   ____________________________________________________________________________
         #   DEG parameters                                                          ####
         
+        shiny::HTML(paste0('<h4 style="display: inline-block;">Conditions to compare for differential analysis</h4>', ### Display: inline-block; allow the question mark to be on the same line.
+                           shinyWidgets::dropdownButton(
+                             size = 'xs',
+                             shiny::includeMarkdown(system.file("extdata", "edgeR.md", package = "DIANE")),
+                             circle = TRUE,
+                             status = "success",
+                             icon = shiny::icon("question"),
+                             width = "600px",
+                             inline = TRUE,
+                             tooltip = shinyWidgets::tooltipOptions(title = "More details")
+                           )                 
+        )),
         
-        shiny::h4("Conditions to compare for differential analysis : "),
-        
+
         shiny::uiOutput(ns("condition_choices")),
         
         shiny::htmlOutput(ns("condition_choices_visualisation")),
+        
+        shiny::column(12,
+          shiny::hr()
+        ),
+        
+        shiny::textInput(inputId = ns("DEG_list_name"), label = "Name of differentially expressed gene list", value = "", width = "100%"),
         
         shiny::numericInput(
           ns("dea_fdr"),
@@ -80,6 +83,7 @@ mod_differential_expression_analysis_ui <- function(id) {
           color = "success",
           style = "material-flat"
         ),
+        
         
         shiny::hr(),
         shiny::uiOutput(ns("deg_test_summary")),
@@ -130,7 +134,7 @@ mod_differential_expression_analysis_ui <- function(id) {
             "This raw pvalue histogram can be used as a diagnostic
                           tool. The density of pvalue shoud be evenly distributed
                           along the plot, except for a peak near 0.
-                          You can dynamically change thefold change cutoff,
+                          You can dynamically change the the absolute log fold change cutoff,
                           and should observe the plot with a cutoff
                           of 0 to look at the whole output from the differential
                           expression analysis."
@@ -236,7 +240,8 @@ mod_differential_expression_analysis_server <-
       trt = NULL,
       lfc = NULL,
       fdr = NULL,
-      gene_table = NULL
+      gene_table = NULL,
+      current_comparison = NULL
     )
     
     
@@ -274,6 +279,19 @@ mod_differential_expression_analysis_server <-
           )
         )
       )
+    })
+    
+    ### Update the name of the comparison.
+    shiny::observeEvent(ignoreInit = TRUE, list(input$reference, input$perturbation), {
+      golem::print_dev("Ref or pert changed")
+      shiny::updateTextInput(inputId = "DEG_list_name",
+                             value = paste0(
+                               "(",
+                               paste0(input$reference, collapse = " + "),
+                               ") (",
+                               paste0(input$perturbation, collapse = " + "), collapse = " ",
+                               ")"
+                             ))
     })
     
     output$condition_choices_visualisation <- shiny::renderText({
@@ -481,8 +499,10 @@ mod_differential_expression_analysis_server <-
         r_dea$trt <- input$perturbation
       }
       
-      r$DEGs[[paste(r_dea$ref, r_dea$trt)]] <- r_dea$DEGs
-      r$top_tags[[paste(r_dea$ref, r_dea$trt)]] <- r_dea$top_tags
+      r$DEGs[[input$DEG_list_name]] <- r_dea$DEGs
+      r$top_tags[[input$DEG_list_name]] <- r_dea$top_tags
+      # r$DEGs[[paste(r_dea$ref, r_dea$trt)]] <- r_dea$DEGs
+      # r$top_tags[[paste(r_dea$ref, r_dea$trt)]] <- r_dea$top_tags
       r_dea$go <- NULL
       
       r_dea$lfc <- input$dea_lfc
@@ -506,6 +526,12 @@ mod_differential_expression_analysis_server <-
       }
       
       r_dea$gene_table <- top[, columns]
+      r_dea$current_comparison <- input$DEG_list_name
+      
+      ##Store informations about the comparison. Will be used to remember what has been done.
+      r$DEGs_infos[[input$DEG_list_name]][["Conditions"]] <- c(input$reference, input$perturbation)
+      r$DEGs_infos[[input$DEG_list_name]][["lfc"]] <- input$dea_lfc
+      r$DEGs_infos[[input$DEG_list_name]][["fdr"]] <- input$dea_fdr
       
     })
     
@@ -562,8 +588,9 @@ mod_differential_expression_analysis_server <-
     })
     
     output$deg_number_summary <- shiny::renderUI({
-      shiny::req(r$top_tags, r_dea$ref, r_dea$trt)
-      shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
+      shiny::req(r_dea$top_tags, r_dea$ref, r_dea$trt)
+      # shiny::req(r_dea$top_tags)
+      # shiny::req(r$top_tags[[input$DEG_list_name]])
       
       tagList(
         shiny::fluidRow(
@@ -574,7 +601,7 @@ mod_differential_expression_analysis_server <-
             rightBorder = TRUE
           ),
           shinydashboardPlus::descriptionBlock(
-            number = sum(r$top_tags[[paste(r_dea$ref, r_dea$trt)]]$logFC > 0),
+            number = sum(r_dea$top_tags$logFC > 0),
             numberColor = "olive",
             numberIcon = shiny::icon('caret-up'),
             header = "up regulated",
@@ -582,7 +609,7 @@ mod_differential_expression_analysis_server <-
             rightBorder = TRUE
           ),
           shinydashboardPlus::descriptionBlock(
-            number = sum(r$top_tags[[paste(r_dea$ref, r_dea$trt)]]$logFC < 0),
+            number = sum(r_dea$top_tags$logFC < 0),
             numberColor = "red",
             numberIcon = shiny::icon('caret-down'),
             header = "down-regulated",
@@ -601,7 +628,8 @@ mod_differential_expression_analysis_server <-
     
     output$dl_bttns <- shiny::renderUI({
       shiny::req(r$top_tags, r_dea$ref, r_dea$trt)
-      shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
+      shiny::req(r$top_tags[[r_dea$current_comparison]])
+      # shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
       tagList(
         shiny::fluidRow(col_12(
           shinyWidgets::downloadBttn(
@@ -690,7 +718,7 @@ mod_differential_expression_analysis_server <-
       filename = function() {
         paste(
           paste0(
-            "enriched_GOterms",
+            "enriched_GOterms_",
             input$reference,
             '_VS_',
             input$perturbation,
@@ -725,7 +753,8 @@ mod_differential_expression_analysis_server <-
     
     output$deg_table <- DT::renderDataTable({
       shiny::req(r$top_tags, r_dea$ref, r_dea$trt, r_dea$gene_table)
-      shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
+      shiny::req(r$top_tags[[r_dea$current_comparison]])
+      # shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
       
       table <- DT::datatable(r_dea$gene_table,
                              selection = "single",
@@ -746,7 +775,14 @@ mod_differential_expression_analysis_server <-
     shiny::observeEvent(input$deg_table_rows_selected, {
       showModal(
         modalDialog(
-          plotOutput(ns("count_table_plot")), 
+          shiny::tagList(plotOutput(ns("count_table_plot")),
+                         shiny::column(3,
+                                       shiny::checkboxInput(inputId = ns("take_log_count"), label = "Take log2 of count", value = FALSE, width = "100%")
+                         ),
+                         shiny::column(3,
+                                       shiny::checkboxInput(inputId = ns("start_y_from_zero"), label = "Y axis start from 0", value = FALSE, width = "100%")
+                         )
+          ), 
           size = "l",
           easyClose = TRUE,
           fade = TRUE
@@ -756,7 +792,7 @@ mod_differential_expression_analysis_server <-
     
     
     output$count_table_plot <- shiny::renderPlot({
-      DIANE::draw_expression_levels(log2(r$normalized_counts+2), genes = rownames(r_dea$top_tags[input$deg_table_rows_selected,]))
+      DIANE::draw_expression_levels(r$normalized_counts, genes = rownames(r_dea$top_tags[input$deg_table_rows_selected,]),  log2_count = input$take_log_count, start_from_zero = input$start_y_from_zero)
     })
     
     #   ____________________________________________________________________________
@@ -1046,7 +1082,7 @@ mod_differential_expression_analysis_server <-
     output$heatmap_conditions_choice <- shiny::renderUI({
       shiny::req(r$conditions)
       shiny::req(r$top_tags, r_dea$ref, r_dea$trt)
-      shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
+      shiny::req(r$top_tags[[r_dea$current_comparison]])
       genes_conditions <- unique(unlist(stringr::str_extract_all( ##Catch probably any condition name.
         paste(r_dea$ref, r_dea$trt), pattern = "[^()+ ]+"))
       )
@@ -1079,7 +1115,7 @@ mod_differential_expression_analysis_server <-
     
     output$ma_vulcano <- shiny::renderPlot({
       shiny::req(r$top_tags, r_dea$DEGs)
-      shiny::req(r$top_tags[[paste(r_dea$ref, r_dea$trt)]])
+      shiny::req(r$top_tags[[r_dea$current_comparison]])
       draw_DEGs(
         tags = r_dea$tags,
         fdr = input$dea_fdr,

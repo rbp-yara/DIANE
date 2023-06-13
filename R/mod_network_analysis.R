@@ -243,6 +243,14 @@ mod_network_analysis_server <- function(input, output, session, r) {
         
         shiny::plotOutput(ns("node_profile")),
         
+        shiny::fluidRow(
+          shiny::column(3,
+                        shiny::checkboxInput(inputId = ns("take_log_count"), label = "Take log2 of count", value = FALSE, width = "100%")
+          ),
+          shiny::column(3,
+                        shiny::checkboxInput(inputId = ns("start_y_from_zero"), label = "Y axis start from 0", value = FALSE, width = "100%")
+          )),
+        
         shiny::hr(),
         
         shiny::uiOutput(ns("node_reg")),
@@ -273,7 +281,10 @@ mod_network_analysis_server <- function(input, output, session, r) {
     
     draw_expression_levels(data,
                            genes = c(input$click),
-                           conds = r$networks[[r$current_network]]$conditions)
+                           conds = r$networks[[r$current_network]]$conditions,
+                           log2_count = input$take_log_count,
+                           start_from_zero = input$start_y_from_zero
+    )
   })
   
   node_descr <- shiny::reactive({

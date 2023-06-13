@@ -313,6 +313,9 @@ draw_PCA_legacy <- function(data) {
 #' @param conds conditions to be shown on expression levels (must be contained in
 #' the column names of data before the _rep suffix). Default : all conditions.
 #' @param gene.name.size size of the facet plot title font for each gene. Default : 12
+#' @param log2 transform count using the log2 function. A pseudocount of 1 is added to
+#' avoid negative values.
+#' @param start_from_zero set the beginning of the y axis to 0.
 #'
 #' @import ggplot2
 #'
@@ -327,7 +330,9 @@ draw_expression_levels <-
   function(data,
            genes,
            conds = unique(stringr::str_split_fixed(colnames(data), '_', 2)[, 1]),
-           gene.name.size = 12) {
+           gene.name.size = 12,
+           log2_count = FALSE,
+           start_from_zero = FALSE) {
     
     # trimming the gene names to allow more flexible use in the UI
     genes <- stringr::str_trim(genes)
@@ -347,8 +352,11 @@ draw_expression_levels <-
     }
     
     data <- as.data.frame(data)
+    if(log2_count == TRUE){
+      data <- log2(data+1)
+    }
     data$gene <- rownames(data)
-    
+
     d <-
       suppressMessages(reshape2::melt(as.data.frame(data[intersect(rownames(data), genes), c(conditions, 'gene')])))
     d$condition <- stringr::str_split_fixed(d$variable, '_', 2)[, 1]
@@ -357,9 +365,11 @@ draw_expression_levels <-
     ggplot2::ggplot(d,
                     ggplot2::aes(x = condition,
                                  y = value,
-                                 color = replicate)) +
+                                 color = replicate)) + 
+     {if(start_from_zero) ggplot2::expand_limits(y=0)} + ###Make the y axis start at 0
       ggplot2::geom_point(size = 4, alpha = 0.8) +
       ggplot2::facet_wrap(~ gene, scales = "free") +
+      # {if(log2_count){ ggplot2::ggtitle("Log2 Normalized expression levels") } else {ggplot2::ggtitle("Normalized expression levels")}} +
       ggplot2::ggtitle("Normalized expression levels") +
       ggplot2::theme(
         plot.title = ggplot2::element_text(
@@ -373,7 +383,8 @@ draw_expression_levels <-
         axis.text.y = ggplot2::element_text(size = 22, angle = 320),
         axis.title.y = ggplot2::element_text(size = 20),
         axis.text.x = ggplot2::element_text(size = 15, angle = 20)
-      ) + ggplot2::xlab("") + ggplot2::ylab("Normalized counts")
+      ) + ggplot2::xlab("") +
+      {if(log2_count){ ggplot2::ylab(expression(paste(log[2], " Normalized counts")) )} else {ggplot2::ylab("Normalized counts")}}
   }
 
 

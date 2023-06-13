@@ -48,11 +48,16 @@ mod_module_levels_ui <- function(id){
                             closable = FALSE,
                             width = 12,
                             
-                            
                             shiny::uiOutput(ns("gene_choice")),
                             
+                            shiny::uiOutput(ns("condition_choice")),
                             
-                            shiny::uiOutput(ns("condition_choice"))
+                            shiny::column(2,
+                              shiny::checkboxInput(inputId = ns("take_log_count"), label = "Take log2 of count", value = FALSE, width = "100%")
+                            ),
+                            shiny::column(2,
+                              shiny::checkboxInput(inputId = ns("start_y_from_zero"), label = "Y axis start from 0", value = FALSE, width = "100%")
+                            )
                             
                           ),
                           shinydashboardPlus::box(solidHeader = FALSE,
@@ -120,7 +125,7 @@ mod_module_levels_server <- function(input, output, session, r){
     
     draw_expression_levels(as.data.frame(r$normalized_counts),
                            conds = input$input_conditions,
-                           genes = genes, gene.name.size = 22)
+                           genes = genes, gene.name.size = 22, log2_count = input$take_log_count, start_from_zero = input$start_y_from_zero)
   })
   
   

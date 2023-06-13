@@ -20,6 +20,7 @@ app_server <- function(input, output, session) {
     conditions = NULL,
     design = NULL,
     DEGs = list(),
+    DEGs_infos = list(), ###Used to store some informations about DEG list (conditions, cutoff, etc.)
     top_tags = list(),
     clusterings = list(),
     current_comparison = NULL,
