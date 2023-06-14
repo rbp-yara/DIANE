@@ -37,3 +37,4 @@ matrix containing oob importances for all TF-gene pairs
 \code{GENIE3OOB} Infers a gene regulatory network (in the form of a pvalues-filled adjacency matrix)
 from expression data, using ensembles of regression trees.
 }
+\keyword{internal}

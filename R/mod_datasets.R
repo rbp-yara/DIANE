@@ -4,7 +4,7 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
 #' @importFrom shiny NS tagList 
 mod_datasets_ui <- function(id){
@@ -18,7 +18,7 @@ mod_datasets_ui <- function(id){
     
 #' datasets Server Function
 #'
-#' @noRd 
+#' @noRd
 mod_datasets_server <- function(input, output, session){
   ns <- session$ns
   

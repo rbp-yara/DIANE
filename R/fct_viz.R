@@ -400,9 +400,10 @@ draw_expression_levels <-
 #' @param data normalized expression data with samples as columns and genes as rows.
 #' @param kept_axes max number of component to keep.
 #'
-#' @export
 #' @import ggplot2
 #' @import ade4
+#'
+#' @export
 #'
 #' @examples
 #' data("abiotic_stresses")

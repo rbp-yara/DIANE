@@ -4,7 +4,7 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
 #' @importFrom shiny NS tagList 
 mod_legal_mentions_ui <- function(id){
@@ -16,7 +16,7 @@ mod_legal_mentions_ui <- function(id){
     
 #' legal_mentions Server Function
 #'
-#' @noRd 
+#' @noRd
 mod_legal_mentions_server <- function(input, output, session){
   ns <- session$ns
  

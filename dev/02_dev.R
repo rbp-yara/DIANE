@@ -12,6 +12,7 @@
 ###################################
 
 # Engineering
+set_golem_version("1.1.0")
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency

@@ -15,3 +15,5 @@ $run_dev.*
 inst/extdata/datasets/*.csv
 ^Dockerfile$
 ^\.dockerignore$
+^doc$
+^Meta$

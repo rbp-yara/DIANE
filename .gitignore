@@ -10,3 +10,5 @@ logs/loggit.log
 inst/extdata/datasets/*.csv
 *.DS_Store
 docs
+/doc/
+/Meta/

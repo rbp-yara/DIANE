@@ -1,7 +1,12 @@
 Package: DIANE
 Title: DIANE
-Version: 1.0.6
-Authors@R: person('Oceane', 'Cassan', email = 'oceane.cassan@cnrs.fr', role = c('cre', 'aut'))
+Version: 1.1.0
+Authors@R: c(
+    person("Océane", "Cassan", , "oceane.cassan@lirm.fr", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0002-4595-2457")),
+    person("Alexandre", "Soriano", , "alexandre.soriano@cirad.fr", role = "aut",
+           comment = c(ORCID = "0000-0003-1406-46067"))
+  )
 Description: Dashboard for the Inference and Analysis of Network from Expression data. This package is particularly well suited for combinatoric design such as perturbation experiments.
 License: GPL-3
 Imports: 

@@ -452,6 +452,7 @@ get_gene_information <- function(ids, organism){
 #' @param go_table go as returned by enrich_go
 #'
 #' @return integer
+#' @keywords internal
 interGO <- function(go_pair, go_table){
   go1 <- unlist(strsplit(go_pair, ' '))[1]
   go2 <- unlist(strsplit(go_pair, ' '))[2]

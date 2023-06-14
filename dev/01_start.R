@@ -55,6 +55,20 @@ golem::use_favicon("D:/These/Thesis/hex-DIANE.png") # path = "path/to/ico". Can 
 golem::use_utils_ui()
 golem::use_utils_server()
 
+# Change Author
+p <- c(person(given = "Océane",
+              family = "Cassan",
+              role = c("cre", "aut"),
+              email = "oceane.cassan@lirm.fr",
+              comment = c(ORCID = "0000-0002-4595-2457")),
+       person(given = "Alexandre",
+              family = "Soriano",
+              role = c("aut"),
+              email = "alexandre.soriano@cirad.fr",
+              comment = c(ORCID = "0000-0003-1406-46067")))
+
+desc::desc_set_authors(p)
+
 # You're now set! ----
 
 # go to dev/02_dev.R

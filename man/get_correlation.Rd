@@ -18,3 +18,4 @@ spearman correlation bewteen the two expression vectors
 \description{
 Get correlation
 }
+\keyword{internal}

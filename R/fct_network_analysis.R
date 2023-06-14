@@ -2,6 +2,7 @@
 #'
 #' @param graph igraph object, directed
 #' @return (named) vector
+#' @noRd
 community_structure <- function(graph) {
   g <- igraph::as.undirected(graph, mode = "collapse")
   return(igraph::membership(igraph::cluster_louvain(g)))

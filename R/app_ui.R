@@ -19,11 +19,11 @@ logo_diane <- dashboardthemes::shinyDashboardLogoDIY(
   badgeBackColor = "#5FBF64"
   ,
   badgeBorderRadius = 5
-  
+
 )
 
 dbHeader <- shinydashboard::dashboardHeader(title = logo_diane,
-                                            tags$li(class = "dropdown", 
+                                            tags$li(class = "dropdown",
                                                     tags$li(shiny::actionButton("plot_params", label = NULL, icon = shiny::icon("image", class = "duotone"), class = "btn-success"), style = "padding-top: 8px; display: inline-block;  color:#0098f8;")
                                             ),
                                             tags$li(class = "dropdown",
@@ -62,7 +62,7 @@ app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
-    
+
     ###Change the position of the busyspinner to 50% of screen width and 10% of screen height.
     tags$head(tags$style(HTML('
       .shinybusy {
@@ -113,7 +113,7 @@ app_ui <- function(request) {
             shinydashboard::menuSubItem(tabName = "cluster_exploration_sub_tab",
                                         text = "Explore clusters")
           ),
-          
+
           shinydashboard::menuItem(
             "Gene Regulatory Network",
             startExpanded = TRUE,
@@ -139,21 +139,21 @@ app_ui <- function(request) {
             icon = shiny::icon("list")
           )
         )
-        
-        
+
+
       ),
 
 
 #   ____________________________________________________________________________
 #   body                                                                    ####
 
-      
+
       shinydashboard::dashboardBody(
         dashboardthemes::shinyDashboardThemes(theme = "grey_light"),
         #htmltools::includeCSS("inst/app/www/styles.css"),
         #shiny::includeMarkdown(system.file("extdata", "logo_top.md", package = "DIANE")),
         #img(src='myImage.png', align = "right"),
-        
+
         tags$style(HTML("
 
             h1 {
@@ -162,68 +162,68 @@ app_ui <- function(request) {
               line-height: 1.1;
               color: #2f6f46 ;
             }
-            
+
             h2 {
               font-family: Verdana;
               font-weight: 500;
               line-height: 1.1;
             }
-            
+
             li {
               font-family: Verdana;
               font-weight: 500;
               line-height: 1.1;
             }
-            
+
             .box-title {
               font-family: Verdana;
               font-weight: 500;
               line-height: 1.1;
             }
-            
+
             text {
               font-family: Verdana;
               font-weight: 500;
               line-height: 1.1;
             }
-            
+
             body {
               font-family: Verdana;
             }
-      
+
           ")),
-        
-        
+
+
         #' tags$style(HTML("
         #'     @import url('//fonts.googleapis.com/css?family=Prociono|Cabin:400,700');
-        #'     
+        #'
         #'     h1 {
         #'       font-family: 'Prociono', cursive;
         #'       font-weight: 500;
         #'       line-height: 1.1;
         #'       color: #369358;
         #'     }
-        #'     
+        #'
         #'     h2 {
         #'       font-family: 'Prociono', cursive;
         #'       font-weight: 500;
         #'       line-height: 1.1;
         #'     }
-        #'     
+        #'
         #'     li {
         #'       font-family: 'Prociono', cursive;
         #'       font-weight: 500;
         #'       line-height: 1.1;
         #'     }
-        #'     
+        #'
         #'     .box-title {
         #'       font-family: 'Prociono', cursive;
         #'       font-weight: 500;
         #'       line-height: 1.1;
         #'     }
-        #' 
+        #'
         #'   ")),
-        
+
         shinydashboard::tabItems(
           shinydashboard::tabItem(tabName = "context_tab",
                                   mod_context_ui("context_ui_1")),
@@ -239,10 +239,10 @@ app_ui <- function(request) {
             tabName = "dea_tab",
             mod_differential_expression_analysis_ui("differential_expression_analysis_ui_1")
           ),
-          
-          
-          
-          
+
+
+
+
 #   ____________________________________________________________________________
 #   clustering                                                              ####
 
@@ -252,9 +252,9 @@ app_ui <- function(request) {
             tabName = "cluster_exploration_sub_tab",
             mod_cluster_exploration_ui("cluster_exploration_ui_1")
           ),
-          
-         
-          
+
+
+
 #   ____________________________________________________________________________
 #   network                                                                 ####
 
@@ -268,7 +268,7 @@ app_ui <- function(request) {
 #   ____________________________________________________________________________
 #   other tabs                                                              ####
 
-          
+
           shinydashboard::tabItem(tabName = "datasets_tab",
                                   mod_datasets_ui("datasets_ui_1")),
 
@@ -278,9 +278,9 @@ app_ui <- function(request) {
           shinydashboard::tabItem(tabName = "versions",
                                   mod_versions_ui("versions_ui_1"))
 
-         
+
         )
-        
+
       )
     )
   )
@@ -298,7 +298,7 @@ golem_add_external_resources <- function() {
   golem::add_resource_path('www', app_sys('app/www'))
   golem::add_resource_path('datasets', app_sys('extdata/datasets'))
   #add_resource_path('md', app_sys('app/www/md'))
-  
+
   tags$head(golem::favicon(),
             golem::bundle_resources(path = app_sys('app/www'),
                              app_title = 'DIANE'),
