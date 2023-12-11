@@ -39,7 +39,7 @@ estimateDispersion <- function(tcc, conditions = NULL) {
   }
   else{
     groups <- conditions
-  }
+  },
   design = stats::model.matrix( ~ groups + 0)
   rownames(design) <- colnames(tcc$count)
   colnames(design) <-
@@ -48,8 +48,8 @@ estimateDispersion <- function(tcc, conditions = NULL) {
 
   dge <- edgeR::DGEList(
     counts = tcc$count,
-    lib.size = tcc$norm.factors,
-    norm.factors = colSums(tcc$count),
+    lib.size =  colSums(tcc$count),
+    norm.factors = tcc$norm.factors,
     group = groups,
     genes = rownames(tcc$count)
   )
