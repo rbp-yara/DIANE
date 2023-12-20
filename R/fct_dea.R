@@ -39,7 +39,7 @@ estimateDispersion <- function(tcc, conditions = NULL) {
   }
   else{
     groups <- conditions
-  },
+  }
   design = stats::model.matrix( ~ groups + 0)
   rownames(design) <- colnames(tcc$count)
   colnames(design) <-
