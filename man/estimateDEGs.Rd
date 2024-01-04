@@ -9,11 +9,11 @@ estimateDEGs(fit, reference, perturbation, p.value = 1, lfc = 0)
 \arguments{
 \item{fit}{edgeR glmFit}
 
-\item{reference}{condition being considered as the reference for differential analysis.
+\item{reference}{condition (or a vector of conditions) being considered as the reference for differential analysis.
 It should corresponds to a condition name, e.g. the string before the underscore and 
 replicate number in your sample names.}
 
-\item{perturbation}{condition we compared to the reference for differential analysis.
+\item{perturbation}{condition (or a vector of conditions) to compare to the reference for differential analysis.
 It should corresponds to a condition name, e.g. the string before the underscore and 
 replicate number in your sample names.}
 
@@ -42,6 +42,11 @@ tcc_object <- DIANE::filter_low_counts(tcc_object, threshold)
 fit <- DIANE::estimateDispersion(tcc = tcc_object, 
 conditions = abiotic_stresses$conditions)
 topTags <- DIANE::estimateDEGs(fit, reference = "C", perturbation = "H", p.value = 0.01)
+DEGs <- topTags$table
+head(DEGs)
+
+# For multiple conditions
+topTags <- DIANE::estimateDEGs(fit, reference = "C", perturbation = c("H","M","S"), p.value = 0.01)
 DEGs <- topTags$table
 head(DEGs)
 }

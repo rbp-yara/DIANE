@@ -5,6 +5,7 @@
 #' the IDs of the pair
 #'
 #' @return spearman correlation bewteen the two expression vectors
+#' @keywords internal
 get_correlation <- function(pair, normalized.count) {
   tf1 <- stringr::str_split_fixed(pair, ' ', 2)[1]
   tf2 <- stringr::str_split_fixed(pair, ' ', 2)[2]

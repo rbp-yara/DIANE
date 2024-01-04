@@ -7,7 +7,7 @@
 draw_DEGs(tags, fdr = 0.01, lfc = 0, MA = TRUE)
 }
 \arguments{
-\item{tags}{tags returned bu estimateDEGs, function, that is to say topTags from edgeR, 
+\item{tags}{tags returned by estimateDEGs, function, that is to say topTags from edgeR, 
 used with \code{p.value = 1}}
 
 \item{fdr}{pvalue for DEGs detection}

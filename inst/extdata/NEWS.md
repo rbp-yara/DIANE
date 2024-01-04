@@ -59,3 +59,26 @@ Bug fixes :
 + Fixed not displaying go results for custom org in network communities
 
 + In draw expression levels, genes filtered because of low expression can still be viewed
+
+### 1.1 Multiple conditions DEG
+
++ It is now possible to perform DEA using multiple conditions
+
++ PCA plot readability has been improved
+
++ Now possible to plot a specific PCA in full screen
+
++ Now possible to download plots in the exploratory analysis pattern
+
++ Add a new PCA correlation plot
+
++ Add a pvalue histogram based on DEG list.
+
++ Now possible to display log2 of counts and to make the y axis start from 0.
+
++ Add visible version number
+
++ Add Alexandre Soriano in contact list
+
++ Add the possibility to give custom names to DEG list
+

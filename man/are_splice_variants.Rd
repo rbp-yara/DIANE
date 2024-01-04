@@ -17,3 +17,4 @@ Detects weather or not the data contains splice variants
 instead of unique locus. Returns TRUE if all genes ids match 
 the regex for splice variants
 }
+\keyword{internal}

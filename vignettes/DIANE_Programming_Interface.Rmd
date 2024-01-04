@@ -150,7 +150,7 @@ TCC will perform the following setp, depending on the normalization method you c
 We use here the default parameters (no prior removal of differentially expressed genes, and TMM method) :
 
 ```{r normalize, fig.width=8, fig.height=5}
-tcc_object <- DIANE::normalize(abiotic_stresses$raw_counts, norm_method = 'tmm', iteration = FALSE)
+tcc_object <- DIANE::normalize(abiotic_stresses$raw_counts, norm_method = 'tmm', abiotic_stresses$conditions, iteration = FALSE)
 ```
 
 **Note** : here, our data should not be normalized, as it is already given as TPMs.
@@ -200,13 +200,27 @@ We can plot the correlations of the initial variables to the principal component
 Each principal component explains a certain amount of the total variability, and those relative percentages are shown in what is called the screeplot.
 
 ```{r pca, fig.width=10, fig.height=8}
-DIANE::draw_PCA(data = normalized_counts)
+DIANE::quick_pca(data = normalized_counts)
 ```
 
 The first plane, showing the first two components, is striking in the sense that the conditions are segregated by their heat level.
 Indeed, we find here that 57.3% of gene expression variability can be linked to heat stress.
 
 The second principal axis, is more correlated to osmotic stress, as conditions with mannitol stress are opposed along this axis, carrying 12.2% of gene expression variance.
+
+It is also possible, if needed, to plot only two specific components. This could help to visualize the plot with datasets containing a lot of conditions.
+
+```{r pca_full_screen, fig.width=10, fig.height=8}
+pca_res <- DIANE::compute_pca(data = normalized_counts, kept_axes = 10)
+DIANE::draw_specific_pca(pca = pca_res, component_1 = 1, component_2 = 2, legend = TRUE)
+```
+
+As a complement, correlations between the different components and an experimental design can also be visualized (based on the nice [CorLevelPlot](https://github.com/kevinblighe/CorLevelPlot) package).
+
+```{r pca_correlation_plot, fig.width=10, fig.height=8}
+DIANE::pca_plot_correlation(pca = pca_res, design = abiotic_stresses$design)
+```
+
 
 # Differential expression analysis
 
@@ -249,7 +263,9 @@ If we want to compare genes differentially expressed between Control and Heat st
 
 genes_double_stress <- DIANE::estimateDEGs(fit, reference = "C", perturbation = "MH", p.value = 0.01, lfc = 2)$table$genes
 
+
 genes_lists <- list("C - H" = genes, "C - HM" = genes_double_stress)
+
 # if we only want the conditions used for differential expression analysis :
 DIANE::draw_venn(genes_lists)
 ```
@@ -294,13 +310,11 @@ The input genes of a clustering can't be all the genes of the data, we use the o
 
 You can also specify a subset of the conditions to be used during the clustering if we're not interested in all the conditions.
 
-Do not forget to use the seed argument to that results can be reproduced.
-
 ```{r coseq, fig.width=8, fig.height=5}
+
 genes <- topTags$table$genes
 
-clustering <- DIANE::run_coseq(conds = unique(abiotic_stresses$conditions), data = normalized_counts, 
-                               genes = genes, K = 6:9, transfo = "arcsin", model = "Normal", seed = 123)
+clustering <- DIANE::run_coseq(conds = unique(abiotic_stresses$conditions), data = normalized_counts, genes = genes, K = 6:9, transfo = "arcsin", model = "Normal")
 DIANE::draw_coseq_run(clustering$model, plot = "barplots")
 DIANE::draw_coseq_run(clustering$model, plot = "ICL")
 ```
@@ -317,6 +331,7 @@ DIANE::draw_profiles(data = normalized_counts, clustering$membership, conds = un
 All genes in one cluster can be retrieved with :
 
 ```{r genes_in_k, fig.width=10, fig.height=8}
+
 DIANE::get_genes_in_cluster(membership = clustering$membership, cluster = 3) 
 ```
 
@@ -388,14 +403,15 @@ regressors <- intersect(genes, regulators_per_organism[["Arabidopsis thaliana"]]
 # use normalized counts if you did not aggregate splice variants
 grouping <- DIANE::group_regressors(aggregated_data, genes, regressors)
 
+visNetwork::visNetwork(grouping$correlated_regressors_graph$nodes, 
+                       grouping$correlated_regressors_graph$edges)
+
 grouped_counts <- grouping$counts
 
 grouped_targets <- grouping$grouped_genes
 
 grouped_regressors <- grouping$grouped_regressors
 
-# visNetwork::visNetwork(grouping$correlated_regressors_graph$nodes, 
-# grouping$correlated_regressors_graph$edges)
 ```
 
 ## Inference and visualization
@@ -418,24 +434,17 @@ Settings relative to regulatory weights inference are presented in the left pane
 The idea is then to keep the strongest links to build the gene regulatory network.
 The way of determining the right number of final edges in the network can be based on a desired network density alone, or followed by edges statistical testing.
 
-Again, we set the seed before using the network inference procedure which is based on random processes :
-
 ```{r genie, fig.width=8, fig.height=6}
-set.seed(123)
-mat <- DIANE::network_inference(grouped_counts, conds = abiotic_stresses$conditions, 
-                                targets = grouped_targets, regressors = grouped_regressors, 
-                                nCores = 1, verbose = FALSE)
+mat <- DIANE::network_inference(grouped_counts, conds = abiotic_stresses$conditions, targets = grouped_targets, regressors = grouped_regressors, nCores = 1, verbose = FALSE)
 
 network <- DIANE::network_thresholding(mat, n_edges = length(genes))
 
-data <- network_data(network, regulators_per_organism[["Arabidopsis thaliana"]], 
-                     gene_annotations$`Arabidopsis thaliana`)
+data <- network_data(network, regulators_per_organism[["Arabidopsis thaliana"]], gene_annotations$`Arabidopsis thaliana`)
 
 knitr::kable(head(data$nodes))
 
 DIANE::draw_network(data$nodes, data$edges)
 ```
-
 
 `network` is an `igraph` object, and can be analyzed with all the possibilities offered by this complete package about graphs algorithms.
 
@@ -444,7 +453,7 @@ DIANE::draw_network(data$nodes, data$edges)
 A matrix of importances is computed, just as in the previous section, but we prefer to use another importance metric for consistency reasons.
 
 ```{r sigGENIE, eval=FALSE}
-set.seed(123)
+
 mat <- DIANE::network_inference(grouped_counts, 
                                 conds = abiotic_stresses$conditions, 
                                 targets = grouped_targets,
@@ -479,7 +488,7 @@ Given this graph, we can consider that a density value of 0.03 would be a good c
 This step will take a certain time to run, from a few minutes to tens of minutes depending on your hardware.
 
 ```{r testingexpr, eval=FALSE}
-set.seed(123)
+
 res <- DIANE::test_edges(mat, normalized_counts = grouped_counts, density = 0.03,
                          nGenes = nGenes, 
                          nRegulators = nRegulators, 
@@ -500,50 +509,42 @@ res$pvalues_distributions + xlim(0,0.1)
 
 kable(head(res$links))
 
-net <- DIANE::network_from_tests(res$links, fdr = 0.05)
+net <- DIANE::network_from_tests(res$links, fdr = 0.01)
+
+
 ```
 
-All right, the network is ready to be analyzed!
+Alright, the network is ready to be analyzed!
 
 ## Visualization
 
-The first graph shows, in red, the edges that were not significant according to our perumtation tests.
-
-```{r, fig.width=10, fig.height=8}
+```{r communities, fig.width=10, fig.height=8}
 net_data <- network_data(net, regulators_per_organism[["Arabidopsis thaliana"]], gene_annotations$`Arabidopsis thaliana`)
+
+
 draw_discarded_edges(res$links, net_data)
 
-```
 
-The second graph shows to final infered network : 
-
-```{r, fig.width=10, fig.height=8}
 draw_network(net_data$nodes, net_data$edges)
-```
-
-A community discovery is performed using the Louvain algorithm, so we can extract highly connected genes modules.
-You can see those communities on the graph and plot their profiles:
-
-
-```{r communities, fig.width=10, fig.height=8}
 
 data$nodes$group <- data$nodes$community
+DIANE::draw_network(data$nodes, data$edges)
 
 louvain_membership <- data$nodes$community
 names(louvain_membership) <- data$nodes$id
 
-knitr::kable(head(louvain_membership, n = 10))
+print(head(louvain_membership, n = 10))
 
-DIANE::draw_network(data$nodes, data$edges)
-```
-
-```{r, fig.width=10, fig.height=8}
 draw_profiles(aggregated_data, membership = louvain_membership, conds = abiotic_stresses$conditions)
-
 ```
 
+The first graph shows, in red, the edges that were not significant according to our perumtation tests.
 
-Gene ontology enrichment can also be performed on gene communities (However, if there is too few genes, GO enrichment tests may not be significant).
+A community discovery is performed using the Louvain algorithm, so we can extract highly connected genes modules.
+You can see those communities on the graph and plot their profiles:
+
+Gene ontology enrichment can also be performed on gene communities, whereas they must contain quite a lot of genes.
+If there is too few genes, GO enrichment tests may not be significant.
 
 ## Analysis
 

@@ -21,3 +21,4 @@ Returns the factors that
 don't stay at the same level between 
 between the specified conditions
 }
+\keyword{internal}

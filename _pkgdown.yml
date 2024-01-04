@@ -1,15 +1,14 @@
 authors:
   Océane Cassan:
     href: https://oceanecsn.github.io/
-    
-    
+
 development:
   mode: unreleased
-  
+
 template:
   params:
     bootswatch: flatly
-    
+
 reference:
 
 - title: DIANE User Interface
@@ -32,14 +31,14 @@ reference:
   - run_coseq
   - get_genes_in_cluster
   - fit_glm
-  
+
 - title: Gene ontologies and annotations
 - contents:
   - starts_with("enrich_go")
   - starts_with("convert_from")
   - get_gene_information
-  
- 
+
+
 - title: Gene regulatory network inference
 - contents:
   - starts_with("network_")
@@ -47,12 +46,15 @@ reference:
   - estimate_test_edges_time
   - group_regressors
   - describe_node
-  
- 
+
+
 - title: Visualization functions
 - contents:
   - starts_with("draw_")
-  
+  - compute_pca
+  - pca_plot_correlation
+  - quick_pca
+
 - title: Data
 - contents:
   - regulators_per_organism

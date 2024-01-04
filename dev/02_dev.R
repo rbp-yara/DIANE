@@ -12,6 +12,7 @@
 ###################################
 
 # Engineering
+set_golem_version("1.1.0")
 
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
@@ -59,7 +60,9 @@ usethis::use_package( "rfPermute" )
 usethis::use_package( "knitr" ) 
 usethis::use_package( "rmarkdown" ) 
 usethis::use_package( "ggVennDiagram" ) 
-usethis::use_package( "loggit" ) 
+usethis::use_package( "loggit" )
+usethis::use_package( "ggrepel" )
+usethis::use_dev_package( "CorLevelPlot", remote = "https://github.com/Alexandre-So/CorLevelPlot")
 
 
 
@@ -131,7 +134,7 @@ golem::add_fct( "geneIDs")
 ## Creates .js and .css files at inst/app/www
 #golem::add_js_file( "script" )
 #golem::add_js_handler( "handlers" )
-#golem::add_css_file( "custom" )
+golem::add_css_file( "advanced_pca_selection" )
 
 ## Add internal datasets ----
 ## If you have data in your package

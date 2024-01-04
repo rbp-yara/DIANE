@@ -4,7 +4,7 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
 #' @importFrom shiny NS tagList 
 mod_network_inference_ui <- function(id){
@@ -232,7 +232,7 @@ shiny::hr(),
     
 #' network_inference Server Function
 #'
-#' @noRd 
+#' @noRd
 mod_network_inference_server <- function(input, output, session, r){
   ns <- session$ns
   

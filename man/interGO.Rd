@@ -17,3 +17,4 @@ integer
 \description{
 Number of shared genes between Two GO terms
 }
+\keyword{internal}

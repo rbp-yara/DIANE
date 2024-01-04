@@ -27,3 +27,4 @@ organism = "Arabidopsis thaliana")
 check_IDs(rownames(abiotic_stresses$raw_counts),
 organism = "Homo sapiens")
 }
+\keyword{internal}

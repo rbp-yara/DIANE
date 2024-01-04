@@ -12,6 +12,7 @@ is.unique <- function(vector){
 #' @param design design dataframe
 #'
 #' @return character vector of "active", or "perturbated" factors
+#' @keywords internal
 get_factors_from_conditions <- function(conditions, design){
   if (is.null(design)) return(conditions)
   

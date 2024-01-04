@@ -15,6 +15,7 @@
 #' @param verbose If set to TRUE, a feedback on the progress of the calculations is given. Default: TRUE
 #'
 #' @return matrix containing oob importances for all TF-gene pairs
+#' @keywords internal
 GENIE3OOB <-
   function(exprMatrix,
            regulators = NULL,

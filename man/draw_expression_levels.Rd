@@ -8,7 +8,9 @@ draw_expression_levels(
   data,
   genes,
   conds = unique(stringr::str_split_fixed(colnames(data), "_", 2)[, 1]),
-  gene.name.size = 12
+  gene.name.size = 12,
+  log2_count = FALSE,
+  start_from_zero = FALSE
 )
 }
 \arguments{
@@ -22,6 +24,11 @@ the rownames of data)}
 the column names of data before the _rep suffix). Default : all conditions.}
 
 \item{gene.name.size}{size of the facet plot title font for each gene. Default : 12}
+
+\item{start_from_zero}{set the beginning of the y axis to 0.}
+
+\item{log2}{transform count using the log2 function. A pseudocount of 1 is added to
+avoid negative values.}
 }
 \description{
 The normalized counts of the desired genes in the specified conditions are

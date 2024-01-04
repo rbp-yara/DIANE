@@ -7,6 +7,7 @@
 #' @param gene_ids gene vector to be tested
 #'
 #' @return boolean
+#' @keywords internal
 are_splice_variants <- function(gene_ids){
   #return(sum(stringr::str_detect( gene_ids, pattern = "\\.[[:digit:]]+$")) == length(gene_ids))
   return(sum(stringr::str_detect( gene_ids, pattern = "\\.[[:digit:]]+$")) > 0)
@@ -79,6 +80,7 @@ get_locus <- function(gene_ids, unique = TRUE){
 #' @return boolean, TRUE if all of the gene IDs match the expected regex for
 #' the specified organism.
 #' @export
+#' @keywords internal
 #'
 #' @examples 
 #' data("abiotic_stresses")

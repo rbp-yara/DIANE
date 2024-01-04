@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DIANE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.0.6</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">1.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../articles/DIANE.html">Get started</a>
 </li>
@@ -50,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,17 +56,17 @@
       <a href="../articles/DIANE_Input_data.html">Data upload</a>
     </li>
     <li>
-      <a href="../articles/DIANE_normalize.html">Normalization</a>
+      <a href="../articles/DIANE_Programming_Interface.html">DIANE Programming Interface</a>
     </li>
     <li>
-      <a href="../articles/DIANE_Programming_Interface.html">DIANE Programming Interface</a>
+      <a href="../articles/DIANE_normalize.html">Normalization</a>
     </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/OceaneCsn/DIANE/">
+  <a href="https://github.com/OceaneCsn/DIANE/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,45 +81,65 @@
 
       
 
-      </header><script src="DIANE_normalize_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Normalization</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/OceaneCsn/DIANE/blob/master/vignettes/DIANE_normalize.Rmd"><code>vignettes/DIANE_normalize.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/OceaneCsn/DIANE/blob/HEAD/vignettes/DIANE_normalize.Rmd" class="external-link"><code>vignettes/DIANE_normalize.Rmd</code></a></small>
       <div class="hidden name"><code>DIANE_normalize.Rmd</code></div>
 
     </div>
 
     
     
-<div id="normalisation-of-expression-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#normalisation-of-expression-data" class="anchor"></a>Normalisation of expression data</h1>
+<div class="section level2">
+<h2 id="normalisation-of-expression-data">Normalisation of expression data<a class="anchor" aria-label="anchor" href="#normalisation-of-expression-data"></a>
+</h2>
 <p><img src="norm.PNG" align="center" alt="" width="800"></p>
-<div id="sequencing-depth-correction" class="section level2">
-<h2 class="hasAnchor">
-<a href="#sequencing-depth-correction" class="anchor"></a>Sequencing depth correction</h2>
-<p>The <a href="https://rdrr.io/bioc/TCC">TCC R package</a> is used for the normalization. step here, to make samples comparable by correcting for their differences in <strong>sequencing depths</strong>. This step is mandatory before further statistical analysis.</p>
-<p>You can choose to normalize using the methods implemented in edgeR, referenced as ‘tmm’, or the one used in DESeq2, referenced as ‘deseq2’.</p>
-<p>Those normalization methods rely on the hypothesis that a very small proportion of genes are differentially expressed between samples. If you suspect a lot of genes could be differentially expressed in your data, TCC offers the possibility to proceed to a first detection of potential differentially expressed genes, to remove them, and then provide a final less biased normalization.</p>
-<p>In that case, enable “prior removal of differentially expressed genes”. TCC will perform the following setp, depending on the normalization. method you chose :</p>
+<div class="section level3">
+<h3 id="sequencing-depth-correction">Sequencing depth correction<a class="anchor" aria-label="anchor" href="#sequencing-depth-correction"></a>
+</h3>
+<p>The <a href="https://rdrr.io/bioc/TCC" class="external-link">TCC R package</a> is used for
+the normalization. step here, to make samples comparable by correcting
+for their differences in <strong>sequencing depths</strong>. This step
+is mandatory before further statistical analysis.</p>
+<p>You can choose to normalize using the methods implemented in edgeR,
+referenced as ‘tmm’, or the one used in DESeq2, referenced as
+‘deseq2’.</p>
+<p>Those normalization methods rely on the hypothesis that a very small
+proportion of genes are differentially expressed between samples. If you
+suspect a lot of genes could be differentially expressed in your data,
+TCC offers the possibility to proceed to a first detection of potential
+differentially expressed genes, to remove them, and then provide a final
+less biased normalization.</p>
+<p>In that case, enable “prior removal of differentially expressed
+genes”. TCC will perform the following setp, depending on the
+normalization. method you chose :</p>
 <ul>
 <li>tmm/deseq2 temporary normalization.</li>
-<li>potential DEG identification and removal using edgeR test method</li>
+<li>potential DEG identification and removal using edgeR test
+method</li>
 <li>tmm/deseq2 definitive normalization.</li>
 </ul>
 </div>
-<div id="low-counts-filtering" class="section level2">
-<h2 class="hasAnchor">
-<a href="#low-counts-filtering" class="anchor"></a>Low counts filtering</h2>
-<p>Removing genes with very low abundance is a common practice in RNA-Seq analysis pipelines for several reasons :</p>
+<div class="section level3">
+<h3 id="low-counts-filtering">Low counts filtering<a class="anchor" aria-label="anchor" href="#low-counts-filtering"></a>
+</h3>
+<p>Removing genes with very low abundance is a common practice in
+RNA-Seq analysis pipelines for several reasons :</p>
 <ul>
-<li><p>They have little biological significance, and could be caused either by noise or mapping errors.</p></li>
-<li><p>The statistical modeling we are planning to perform next is not well suited for low counts, as they make the mean-variance relationship harder to estimate.</p></li>
+<li><p>They have little biological significance, and could be caused
+either by noise or mapping errors.</p></li>
+<li><p>The statistical modeling we are planning to perform next is not
+well suited for low counts, as they make the mean-variance relationship
+harder to estimate.</p></li>
 </ul>
-<p>There is no absolute and commonly accpeted threshold value, but it is recommended to allow only genes with more than 10 counts per sample in average. DIANE thus proposes a threshold at 10*sampleNumber, but feel free to experiment with other values depending on your dataset.</p>
+<p>There is no absolute and commonly accpeted threshold value, but it is
+recommended to allow only genes with more than 10 counts per sample in
+average. DIANE thus proposes a threshold at 10*sampleNumber, but feel
+free to experiment with other values depending on your dataset.</p>
 </div>
 </div>
   </div>
@@ -139,11 +155,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Oceane Cassan.</p>
+  <p></p>
+<p>Developed by <a href="https://oceanecsn.github.io/" class="external-link">Océane Cassan</a>, Alexandre Soriano.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
@@ -151,6 +169,8 @@
 
   
 
+
+  
 
   </body>
 </html>

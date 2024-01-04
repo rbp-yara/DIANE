@@ -4,7 +4,7 @@
 #'
 #' @param id,input,output,session Internal parameters for {shiny}.
 #'
-#' @noRd 
+#' @noRd
 #'
 #' @importFrom shiny NS tagList 
 mod_context_ui <- function(id){
@@ -21,7 +21,7 @@ mod_context_ui <- function(id){
     
 #' context Server Function
 #'
-#' @noRd 
+#' @noRd
 mod_context_server <- function(input, output, session){
   ns <- session$ns
   
