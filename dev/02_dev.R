@@ -111,7 +111,6 @@ golem::add_module( name = "legal_mentions" )
 golem::add_module( name = "versions" )
 
 
-
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
 golem::add_fct( "heatmap" )
@@ -188,6 +187,10 @@ usethis::use_citation()
 # go to dev/03_deploy.R
 
 golem::add_shinyserver_file()
+
+## Using renv
+renv::init()
+
 
 rstudioapi::navigateToFile("dev/03_deploy.R")
 

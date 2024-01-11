@@ -7,75 +7,79 @@ Authors@R: c(
     person("Alexandre", "Soriano", , "alexandre.soriano@cirad.fr", role = "aut",
            comment = c(ORCID = "0000-0003-1406-46067"))
   )
-Description: Dashboard for the Inference and Analysis of Network from Expression data. This package is particularly well suited for combinatoric design such as perturbation experiments.
+Description: Dashboard for the Inference and Analysis of Network from
+    Expression data. This package is particularly well suited for
+    combinatoric design such as perturbation experiments.
 License: GPL-3
+URL: https://github.com/OceaneCsn/DIANE
+BugReports: https://github.com/OceaneCsn/DIANE/issues
+Depends: 
+    R (>= 4.0.0)
 Imports: 
+    ade4,
+    AnnotationDbi,
+    BiocManager,
+    clusterProfiler,
     config,
-    golem,
-    shiny,
+    CorLevelPlot (>= 0.99.0),
+    coseq (>= 1.14.0),
+    dashboardthemes,
+    doParallel,
+    doRNG,
     DT,
-    htmltools,
-    stringr,
+    edgeR,
+    foreach,
+    future,
+    GENIE3,
     ggplot2,
+    ggraph,
+    ggrepel,
+    ggridges,
+    ggVennDiagram,
+    GO.db,
+    golem,
+    grDevices,
+    gridExtra,
+    htmltools,
+    igraph,
+    loggit,
+    org.At.tair.db,
+    org.Ce.eg.db,
+    org.Dm.eg.db,
+    org.EcK12.eg.db,
+    org.Hs.eg.db,
+    org.Mm.eg.db,
+    parallel,
+    pheatmap,
+    plotly,
+    promises,
+    randomForest,
+    RColorBrewer,
+    reshape2,
+    rfPermute (>= 2.5.0),
+    rmarkdown,
+    shiny,
+    shinyalert,
+    shinybusy,
     shinydashboard,
     shinydashboardPlus (>= 2.0.0),
     shinyWidgets,
     stats,
-    pheatmap,
+    stringr,
     TCC,
-    shinybusy,
-    reshape2,
-    limma,
-    edgeR,
-    dashboardthemes,
-    shinyalert,
-    RColorBrewer,
-    coseq (>= 1.14.0),
-    utils,
-    parallel,
-    GENIE3,
-    igraph,
-    visNetwork,
-    gridExtra,
-    org.At.tair.db,
-    clusterProfiler,
-    plotly,
-    AnnotationDbi,
-    foreach,
-    doParallel,
-    doRNG,
-    ade4,
-    ggraph,
-    GO.db,
-    ggridges,
-    pkgload,
-    randomForest,
-    rfPermute (>= 2.5.0),
-    knitr,
-    rmarkdown,
     tictoc,
-    future,
-    promises,
-    ggVennDiagram,
-    loggit,
-    markdown,
-    CorLevelPlot (>= 0.99.0),
-    ggrepel
+    utils,
+    visNetwork
 Suggests: 
-    org.Hs.eg.db,
-    org.Dm.eg.db,
-    org.Mm.eg.db,
-    org.Ce.eg.db,
-    org.EcK12.eg.db
+    knitr
+VignetteBuilder: 
+    knitr
 Remotes:
-    nik01010/dashboardthemes,
-    https://github.com/Alexandre-So/CorLevelPlot
+    https://github.com/Alexandre-So/CorLevelPlot,
+    nik01010/dashboardthemes
+biocViews: Workflow, GeneExpressionWorkflow
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
-URL: https://github.com/OceaneCsn/DIANE
-BugReports: https://github.com/OceaneCsn/DIANE/issues
-biocViews: Workflow, GeneExpressionWorkflow
-Depends: R (>= 4.0.0)
-VignetteBuilder: knitr
-SystemRequirements: pandoc version 1.12.3 or higher (used for rmarkdown report generation)
+SystemRequirements: pandoc version 1.12.3 or higher (used for rmarkdown
+    report generation)
