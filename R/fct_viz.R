@@ -313,7 +313,7 @@ draw_PCA_legacy <- function(data) {
 #' @param conds conditions to be shown on expression levels (must be contained in
 #' the column names of data before the _rep suffix). Default : all conditions.
 #' @param gene.name.size size of the facet plot title font for each gene. Default : 12
-#' @param log2 transform count using the log2 function. A pseudocount of 1 is added to
+#' @param log2_count transform count using the log2 function. A pseudocount of 1 is added to
 #' avoid negative values.
 #' @param start_from_zero set the beginning of the y axis to 0.
 #'
