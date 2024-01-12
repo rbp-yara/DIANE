@@ -143,7 +143,7 @@ draw_distributions <- function(data, boxplot = TRUE) {
 #'
 #' @examples
 #' data("abiotic_stresses")
-#' draw_PCA(abiotic_stresses$normalized_counts)
+#' draw_PCA_legacy(abiotic_stresses$normalized_counts)
 draw_PCA_legacy <- function(data) {
   # PCA computation
   # data <- log(data + 2)
