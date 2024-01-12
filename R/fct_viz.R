@@ -596,12 +596,8 @@ quick_pca <- function(data) {
 #' 
 #' 
 #' @description Draw correlation of each conditions groups to the 
-#' principal components. 
-#' 
-#' @param pca PCA data obtained from the compute_pca function.
-#' @param design experimental design as a dataframe. Please refer to the
-#' experimental-design part of DIANE vignette for format.
-#'
+#' principal components. This is done using the great CorLevelPlot package, by
+#' Kevin Blighe (https://github.com/kevinblighe/CorLevelPlot).
 #' @export
 #' @import ggplot2
 #' @import CorLevelPlot
