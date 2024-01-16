@@ -337,11 +337,13 @@ draw_expression_levels <-
     # trimming the gene names to allow more flexible use in the UI
     genes <- stringr::str_trim(genes)
     
-    if (sum(stringr::str_detect(rownames(data), paste0(genes, collapse = '|'))) == 0) {
+    ## If no input gene is found.
+    if ( sum(rownames(data) %in% genes) == 0) {
       stop("The required genes were not found in expression data rownames")
     }
     
-    if (sum(stringr::str_detect(rownames(data), paste0(genes, collapse = '|'))) > 10) {
+    # If there is more than 10 genes.
+    if ( sum(rownames(data) %in% genes) > 10) {
       stop("Please specify less than 10 genes, for readability reasons.")
     }
     
