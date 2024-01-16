@@ -143,7 +143,7 @@ draw_distributions <- function(data, boxplot = TRUE) {
 #'
 #' @examples
 #' data("abiotic_stresses")
-#' draw_PCA(abiotic_stresses$normalized_counts)
+#' draw_PCA_legacy(abiotic_stresses$normalized_counts)
 draw_PCA_legacy <- function(data) {
   # PCA computation
   # data <- log(data + 2)
@@ -313,7 +313,7 @@ draw_PCA_legacy <- function(data) {
 #' @param conds conditions to be shown on expression levels (must be contained in
 #' the column names of data before the _rep suffix). Default : all conditions.
 #' @param gene.name.size size of the facet plot title font for each gene. Default : 12
-#' @param log2 transform count using the log2 function. A pseudocount of 1 is added to
+#' @param log2_count transform count using the log2 function. A pseudocount of 1 is added to
 #' avoid negative values.
 #' @param start_from_zero set the beginning of the y axis to 0.
 #'
@@ -337,11 +337,13 @@ draw_expression_levels <-
     # trimming the gene names to allow more flexible use in the UI
     genes <- stringr::str_trim(genes)
     
-    if (sum(stringr::str_detect(rownames(data), paste0(genes, collapse = '|'))) == 0) {
+    ## If no input gene is found.
+    if ( sum(rownames(data) %in% genes) == 0) {
       stop("The required genes were not found in expression data rownames")
     }
     
-    if (sum(stringr::str_detect(rownames(data), paste0(genes, collapse = '|'))) > 10) {
+    # If there is more than 10 genes.
+    if ( sum(rownames(data) %in% genes) > 10) {
       stop("Please specify less than 10 genes, for readability reasons.")
     }
     
@@ -596,12 +598,8 @@ quick_pca <- function(data) {
 #' 
 #' 
 #' @description Draw correlation of each conditions groups to the 
-#' principal components. 
-#' 
-#' @param pca PCA data obtained from the compute_pca function.
-#' @param design experimental design as a dataframe. Please refer to the
-#' experimental-design part of DIANE vignette for format.
-#'
+#' principal components. This is done using the great CorLevelPlot package, by
+#' Kevin Blighe (https://github.com/kevinblighe/CorLevelPlot).
 #' @export
 #' @import ggplot2
 #' @import CorLevelPlot

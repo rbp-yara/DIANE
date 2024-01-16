@@ -10,25 +10,28 @@
 
 Given the popularity of combinatorial approaches in experimental biology, we designed this tool to process, explore, and perform advanced statistical analysis on **multifactorial expression data** using state of the art methods. It includes :
 
--   Raw count data pre-processing and normalization
+- Raw count data pre-processing and normalization
 
--   Differential expression analysis and results visualization (Volcano plots, heatmaps, Venn diagrams...)
+- Differential expression analysis and results visualization (Volcano plots, heatmaps, Venn diagrams...)
 
--   Gene ontology enrichment analysis
+- Gene ontology enrichment analysis
 
--   Expression based clustering in the framework of Mixture Models, and individual characterization of those clusters (generalized linar models and GO enrichment analysis).
+- Expression based clustering in the framework of Mixture Models, and individual characterization of those clusters (generalized linar models and GO enrichment analysis).
 
--   Machine learning based Gene Regulatory Network inference and interactive network analysis, community discovery, transcription factor ranking...
+- Machine learning based Gene Regulatory Network inference and interactive network analysis, community discovery, transcription factor ranking...
 
--   Session reporting and results to download at each step of the pipeline
+- Session reporting and results to download at each step of the pipeline
 
--   Demonstration on a published dataset, and other ready to explore datasets on several organisms
+- Demonstration on a published dataset, and other ready to explore datasets on several organisms
 
-All of the features in DIANE are accessible via a single page Shiny application that can be locally launched, or used online at <https://diane.ipsim.inrae.fr>.
+All of the features in DIANE are accessible via a single page Shiny application that can be locally launched, or used online. Several versions of the application are available :
+
+- The official published version : https://diane.ipsim.inrae.fr/DIANE 
+- An updated version, continued from the aforementioned version : https://diane.ipsim.inrae.fr/DIANE_latest/
 
 <img src="man/figures/net.PNG" align="center" width="900"/>
 
-For users more familiar with R programming, all server-side functions in DIANE are exported so they can be called from R scripts. Those functions documentation can be found in the [Reference](https://oceanecsn.github.io/DIANE/reference/index.html), and are illustrated in the [corresponding vignette](https://oceanecsn.github.io/DIANE/articles/DIANE_Programming_Interface.html)
+For users more familiar with R programming, all server-side functions in DIANE are exported so they can be called from R scripts. Those functions documentation can be found in the [Reference](https://alexandre-so.github.io/DIANE/reference/index.html), and are illustrated in the [corresponding vignette](https://alexandre-so.github.io/DIANE/articles/DIANE_Programming_Interface.html)
 
 **To cite DIANE in publications use:**
 
@@ -37,7 +40,7 @@ For users more familiar with R programming, all server-side functions in DIANE a
 
 **A BibTeX entry for LaTeX users is**
 
-```
+```bibtex
 @Article{cassan2021Inferring,
     title = {Inferring and analyzing gene regulatory networks from multi-factorial expression data: a complete and interactive suite},
     author = {Océane Cassan and Sophie Lèbre and Antoine Martin},
@@ -54,13 +57,13 @@ DIANE relies on R \>= 4.0.1, available for all OS at <https://cloud.r-project.or
 
 Download and install DIANE in your R console as follows (you need the remotes package installed `install.packages("remotes")`) :
 
-``` {.r}
-remotes::install_github("OceaneCsn/DIANE")
+```r
+remotes::install_github("Alexandre-So/DIANE")
 ```
 
 You can then launch the application :
 
-``` {.r}
+```r
 library(DIANE)
 DIANE::run_app()
 ```
@@ -75,7 +78,9 @@ We provide a [solution based on Docker and Shiny server](https://hub.docker.com/
 
 Get DIANE source code via Git :
 
-    git clone https://github.com/OceaneCsn/DIANE.git
+```bash
+git clone https://github.com/Alexandre-So/DIANE.git
+```
 
 Install Docker engine, as described in the [Docker docs](https://docs.docker.com/engine/install/).
 
@@ -85,8 +90,10 @@ First, you can change the default settings for the dockerized shiny-server by ed
 
 Now let's build the image, that we'll name diane, from the Dockerfile (superuser rights required).
 
-    cd DIANE
-    docker build -t diane .
+```bash
+cd DIANE
+docker build -t diane .
+```
 
 This might take a while. You can check that the container image was built with `docker images`. Then, you can start the container diane, by setting appropriately the following options in the above command:
 
@@ -100,7 +107,9 @@ This might take a while. You can check that the container image was built with `
 
 Plus, in the following example, a session of DIANE will be allowed to use 16 CPU cores :
 
-    docker run -d --cpus 16 --user shiny --rm -p 8086:8086 -v /path/to/app/on/host/:/srv/shiny-server/ -v /path/to/logs/on/host/:/var/log/shiny-server/ diane
+```bash
+docker run -d --cpus 16 --user shiny --rm -p 8086:8086 -v /path/to/app/on/host/:/srv/shiny-server/ -v /path/to/logs/on/host/:/var/log/shiny-server/ diane
+```
 
 You can check that the container is running with `docker ps`.
 
